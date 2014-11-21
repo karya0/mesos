@@ -281,6 +281,7 @@ libmesos_no_3rdparty_la_SOURCES =					\
 	docker/docker.cpp						\
 	exec/exec.cpp							\
 	files/files.cpp							\
+	hook/manager.cpp						\
 	local/local.cpp							\
 	logging/logging.cpp						\
 	master/contender.cpp						\
@@ -437,6 +438,8 @@ libmesos_no_3rdparty_la_SOURCES +=					\
 	examples/test_module.hpp					\
 	files/files.hpp							\
 	hdfs/hdfs.hpp							\
+	hook/hook.hpp							\
+	hook/manager.hpp						\
 	linux/cgroups.hpp						\
 	linux/fs.hpp							\
 	linux/ns.hpp							\
@@ -460,6 +463,7 @@ libmesos_no_3rdparty_la_SOURCES +=					\
 	messages/messages.hpp						\
 	module/authenticatee.hpp					\
 	module/authenticator.hpp					\
+	module/hook.hpp							\
 	module/isolator.hpp						\
 	module/manager.hpp						\
 	sched/constants.hpp						\
