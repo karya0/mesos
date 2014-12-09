@@ -284,7 +284,7 @@ public:
     add(&Flags::containerizer_path,
         "containerizer_path",
         "The path to the external containerizer executable used when\n"
-        "external isolation is activated (--isolation=external).\n");
+        "external isolation is activated (--isolation=external).");
 
     add(&Flags::containerizers,
         "containerizers",
@@ -299,7 +299,7 @@ public:
     add(&Flags::default_container_image,
         "default_container_image",
         "The default container image to use if not specified by a task,\n"
-        "when using external containerizer.\n");
+        "when using external containerizer.");
 
     // Docker containerizer flags.
     add(&Flags::docker,
@@ -432,6 +432,11 @@ public:
         "master. Use the default '" + DEFAULT_AUTHENTICATEE + "', or\n"
         "load an alternate authenticatee module using --modules.",
         DEFAULT_AUTHENTICATEE);
+
+    add(&Flags::hooks,
+        "hooks",
+        "A comma separated list of hook modules to be\n"
+        "installed inside the slave.");
   }
 
   bool version;
@@ -486,6 +491,7 @@ public:
 #endif
   Option<Modules> modules;
   std::string authenticatee;
+  Option<std::string> hooks;
 };
 
 } // namespace slave {

@@ -22,6 +22,7 @@
 #include <mesos/mesos.hpp>
 
 #include "master/master.hpp"
+#include "slave/slave.hpp"
 
 namespace mesos {
 namespace internal {
@@ -30,13 +31,18 @@ class Hook
 {
 public:
   Hook()
-    : masterLaunchTaskLabelDecorator(NULL)
+    : masterLaunchTaskLabelDecorator(NULL),
+      slaveLaunchExecutorEnvironmentDecorator(NULL)
   {}
 
   Labels (*masterLaunchTaskLabelDecorator)(
       const TaskInfo& taskInfo,
       const FrameworkInfo& frameworkInfo,
       const SlaveInfo& slaveInfo);
+
+  Environment (*slaveLaunchExecutorEnvironmentDecorator)(
+      const ExecutorInfo& executorInfo,
+      const TaskInfo& taskInfo);
 };
 
 } // namespace internal {

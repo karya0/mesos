@@ -34,7 +34,8 @@ class HookManager
 public:
   enum Hooks
   {
-    MASTER_LAUNCH_TASK_LABEL_DECORATOR
+    MASTER_LAUNCH_TASK_LABEL_DECORATOR,
+    SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR
   };
 
   static Try<Nothing> initialize(const std::string& hookList);
@@ -43,6 +44,10 @@ public:
       const TaskInfo& taskInfo,
       const FrameworkInfo& frameworkInfo,
       const SlaveInfo& slaveInfo);
+
+  static Option<Environment> slaveLaunchExecutorEnvironmentDecorator(
+      const ExecutorInfo& executorInfo,
+      const TaskInfo& taskInfo);
 };
 
 } // namespace internal {

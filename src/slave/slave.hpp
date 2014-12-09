@@ -598,6 +598,10 @@ struct Framework
 private:
   Framework(const Framework&);              // No copying.
   Framework& operator = (const Framework&); // No assigning.
+
+  Executor* launchExecutorWork(
+      const ExecutorInfo& executorInfo,
+      const TaskInfo& taskInfo);
 };
 
 

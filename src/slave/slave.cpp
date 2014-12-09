@@ -69,6 +69,8 @@
 
 #include "credentials/credentials.hpp"
 
+#include "hook/manager.hpp"
+
 #include "logging/logging.hpp"
 
 #include "module/authenticatee.hpp"
@@ -3833,7 +3835,7 @@ Framework::~Framework()
 
 
 // Create and launch an executor.
-Executor* Framework::launchExecutor(
+Executor* Framework::launchExecutorWork(
     const ExecutorInfo& executorInfo,
     const TaskInfo& taskInfo)
 {
@@ -3943,6 +3945,28 @@ Executor* Framework::launchExecutor(
         containerId);
 
   return executor;
+}
+
+
+// Create and launch an executor.
+Executor* Framework::launchExecutor(
+    const ExecutorInfo& executorInfo_,
+    const TaskInfo& taskInfo)
+{
+  ExecutorInfo executorInfo(executorInfo_);
+
+  Option<Environment> newEnvironment =
+    HookManager::slaveLaunchExecutorEnvironmentDecorator(
+        executorInfo,
+        taskInfo);
+
+  if (newEnvironment.isSome()) {
+    executorInfo
+      .mutable_command()
+      ->mutable_environment()
+      ->MergeFrom(newEnvironment.get());
+  }
+  return launchExecutorWork(executorInfo, taskInfo);
 }
 
 

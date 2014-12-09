@@ -65,6 +65,10 @@ Try<Nothing> HookManager::initialize(const string& hookList)
       availableHooks[MASTER_LAUNCH_TASK_LABEL_DECORATOR]
         .push_back(module.get());
     }
+    if (module.get()->slaveLaunchExecutorEnvironmentDecorator != NULL) {
+      availableHooks[SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR]
+        .push_back(module.get());
+    }
   }
   return Nothing();
 }
@@ -87,6 +91,26 @@ Labels HookManager::masterLaunchTaskLabelDecorator(
           slaveInfo));
   }
   return labels;
+}
+
+
+Option<Environment> HookManager::slaveLaunchExecutorEnvironmentDecorator(
+      const ExecutorInfo& executorInfo,
+      const TaskInfo& taskInfo)
+{
+  if (!availableHooks.contains(SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR)) {
+    return None();
+  }
+
+  Environment environment;
+  foreach (
+      Hook* hook,
+      availableHooks[SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR]) {
+    Environment result =
+      hook->slaveLaunchExecutorEnvironmentDecorator(executorInfo, taskInfo);
+    environment.MergeFrom(result);
+  }
+  return environment;
 }
 
 } // namespace internal {
