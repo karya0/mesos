@@ -35,7 +35,8 @@ public:
   enum Hooks
   {
     MASTER_LAUNCH_TASK_LABEL_DECORATOR,
-    SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR
+    SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR,
+    SLAVE_REMOVE_EXECUTOR_HOOK
   };
 
   static Try<Nothing> initialize(const std::string& hookList);
@@ -48,6 +49,10 @@ public:
   static Option<Environment> slaveLaunchExecutorEnvironmentDecorator(
       const ExecutorInfo& executorInfo,
       const TaskInfo& taskInfo);
+
+  static void slaveRemoveExecutorHook(
+      const FrameworkInfo& frameworkInfo,
+      const ExecutorInfo& executorInfo);
 };
 
 } // namespace internal {

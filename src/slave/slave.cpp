@@ -3093,6 +3093,8 @@ void Slave::removeExecutor(Framework* framework, Executor* executor)
     }
   }
 
+  HookManager::slaveRemoveExecutorHook(framework->info, executor->info);
+
   framework->destroyExecutor(executor->id);
 }
 

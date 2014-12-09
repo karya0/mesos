@@ -32,7 +32,8 @@ class Hook
 public:
   Hook()
     : masterLaunchTaskLabelDecorator(NULL),
-      slaveLaunchExecutorEnvironmentDecorator(NULL)
+      slaveLaunchExecutorEnvironmentDecorator(NULL),
+      slaveRemoveExecutorHook(NULL)
   {}
 
   Labels (*masterLaunchTaskLabelDecorator)(
@@ -43,6 +44,10 @@ public:
   Environment (*slaveLaunchExecutorEnvironmentDecorator)(
       const ExecutorInfo& executorInfo,
       const TaskInfo& taskInfo);
+
+  void (*slaveRemoveExecutorHook)(
+      const FrameworkInfo& frameworkInfo,
+      const ExecutorInfo& executorInfo);
 };
 
 } // namespace internal {

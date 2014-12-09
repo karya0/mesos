@@ -69,6 +69,9 @@ Try<Nothing> HookManager::initialize(const string& hookList)
       availableHooks[SLAVE_LAUNCH_EXECUTOR_ENVIRONMENT_DECORATOR]
         .push_back(module.get());
     }
+    if (module.get()->slaveRemoveExecutorHook != NULL) {
+      availableHooks[SLAVE_REMOVE_EXECUTOR_HOOK].push_back(module.get());
+    }
   }
   return Nothing();
 }
@@ -111,6 +114,20 @@ Option<Environment> HookManager::slaveLaunchExecutorEnvironmentDecorator(
     environment.MergeFrom(result);
   }
   return environment;
+}
+
+
+void HookManager::slaveRemoveExecutorHook(
+    const FrameworkInfo& frameworkInfo,
+    const ExecutorInfo& executorInfo)
+{
+  if (!availableHooks.contains(SLAVE_REMOVE_EXECUTOR_HOOK)) {
+    return;
+  }
+
+  foreach (Hook* hook, availableHooks[SLAVE_REMOVE_EXECUTOR_HOOK]) {
+    hook->slaveRemoveExecutorHook(frameworkInfo, executorInfo);
+  }
 }
 
 } // namespace internal {
