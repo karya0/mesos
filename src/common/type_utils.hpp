@@ -323,17 +323,17 @@ inline std::ostream& operator << (
 }
 
 
-namespace internal {
-
-bool operator == (const Task& left, const Task& right);
-
-
 inline std::ostream& operator << (
     std::ostream& stream,
     const Modules& modules)
 {
   return stream << modules.DebugString();
 }
+
+
+namespace internal {
+
+bool operator == (const Task& left, const Task& right);
 
 
 std::ostream& operator << (
