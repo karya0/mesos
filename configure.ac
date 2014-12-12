@@ -257,7 +257,7 @@ AC_MSG_NOTICE([Setting up build environment for ${target_cpu} ${target_os}])
 case "${target_os}" in
   linux*)
     OS_NAME=linux
-    LIBS="$LIBS -lrt"
+    LIBS="$LIBS -lpthread -lrt"
     ;;
   darwin*)
     OS_NAME=darwin
