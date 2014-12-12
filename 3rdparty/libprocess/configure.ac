@@ -153,7 +153,9 @@ AC_ARG_VAR([PROTOBUF_JAR], [full path to protobuf jar on prefixed builds])
 # Do some OS specific setup.
 case "${target_os}" in
   linux*)
-    LIBS="$LIBS -lrt" # For clock_gettime() in stout/stopwatch.hpp.
+    # Link against librt for clock_gettime() in stout/stopwatch.hpp.
+    LIBS="$LIBS -lpthread -lrt"
+
     OS_NAME=linux # Used below for OS_LINUX.
     ;;
   darwin*)
