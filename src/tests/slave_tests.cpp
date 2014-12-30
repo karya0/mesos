@@ -89,10 +89,6 @@ using testing::InvokeWithoutArgs;
 using testing::Return;
 using testing::SaveArg;
 
-// Those of the overall Mesos master/slave/scheduler/driver tests
-// that seem vaguely more slave than master-related are in this file.
-// The others are in "master_tests.cpp".
-
 class SlaveTest : public MesosTest {};
 
 
