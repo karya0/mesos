@@ -96,6 +96,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
+using mesos::slave::Limitation;
+
 using mesos::slave::state::RunState;
 
 const std::string VETH_PREFIX = "mesos";

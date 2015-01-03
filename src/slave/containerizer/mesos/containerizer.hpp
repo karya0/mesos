@@ -49,7 +49,7 @@ public:
       bool local,
       Fetcher* fetcher,
       const process::Owned<Launcher>& launcher,
-      const std::vector<process::Owned<Isolator>>& isolators);
+      const std::vector<process::Owned<mesos::slave::Isolator>>& isolators);
 
   // Used for testing.
   MesosContainerizer(const process::Owned<MesosContainerizerProcess>& _process);
@@ -106,7 +106,7 @@ public:
       bool _local,
       Fetcher* _fetcher,
       const process::Owned<Launcher>& _launcher,
-      const std::vector<process::Owned<Isolator>>& _isolators)
+      const std::vector<process::Owned<mesos::slave::Isolator>>& _isolators)
     : flags(_flags),
       local(_local),
       fetcher(_fetcher),
@@ -212,7 +212,7 @@ private:
   // processes. This will trigger container destruction.
   void limited(
       const ContainerID& containerId,
-      const process::Future<Limitation>& future);
+      const process::Future<mesos::slave::Limitation>& future);
 
   // Call back for when the executor exits. This will trigger container
   // destroy.
@@ -222,7 +222,7 @@ private:
   const bool local;
   Fetcher* fetcher;
   const process::Owned<Launcher> launcher;
-  const std::vector<process::Owned<Isolator>> isolators;
+  const std::vector<process::Owned<mesos::slave::Isolator>> isolators;
 
   enum State
   {
@@ -250,7 +250,7 @@ private:
 
     // We keep track of any limitations received from each isolator so we can
     // determine the cause of an executor termination.
-    std::vector<Limitation> limitations;
+    std::vector<mesos::slave::Limitation> limitations;
 
     // We keep track of the resources for each container so we can set the
     // ResourceStatistics limits in usage().

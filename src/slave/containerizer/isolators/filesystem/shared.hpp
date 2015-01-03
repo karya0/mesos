@@ -32,10 +32,10 @@ namespace slave {
 // into each container's mount namespace. In particular, this can be
 // used to give each container a "private" system directory, such as
 // /tmp and /var/tmp.
-class SharedFilesystemIsolatorProcess : public IsolatorProcess
+class SharedFilesystemIsolatorProcess : public mesos::slave::IsolatorProcess
 {
 public:
-  static Try<Isolator*> create(const Flags& flags);
+  static Try<mesos::slave::Isolator*> create(const Flags& flags);
 
   virtual ~SharedFilesystemIsolatorProcess();
 
@@ -52,7 +52,7 @@ public:
       const ContainerID& containerId,
       pid_t pid);
 
-  virtual process::Future<Limitation> watch(
+  virtual process::Future<mesos::slave::Limitation> watch(
       const ContainerID& containerId);
 
   virtual process::Future<Nothing> update(

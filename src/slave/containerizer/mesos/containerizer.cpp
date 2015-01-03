@@ -67,6 +67,10 @@ namespace slave {
 
 using mesos::modules::ModuleManager;
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
+using mesos::slave::Limitation;
+
 using mesos::slave::state::ExecutorState;
 using mesos::slave::state::FrameworkState;
 using mesos::slave::state::RunState;

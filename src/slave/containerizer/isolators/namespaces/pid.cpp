@@ -42,6 +42,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
+using mesos::slave::Limitation;
+
 using mesos::slave::state::RunState;
 
 // The root directory where we bind mount all the namespace handles.

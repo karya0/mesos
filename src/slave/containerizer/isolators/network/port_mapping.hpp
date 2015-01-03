@@ -122,10 +122,10 @@ std::vector<routing::filter::ip::PortRange> getPortRanges(
 // isolator is useful when the operator wants to reuse the host IP for
 // all containers running on the host (e.g., there are insufficient
 // IPs).
-class PortMappingIsolatorProcess : public IsolatorProcess
+class PortMappingIsolatorProcess : public mesos::slave::IsolatorProcess
 {
 public:
-  static Try<Isolator*> create(const Flags& flags);
+  static Try<mesos::slave::Isolator*> create(const Flags& flags);
 
   virtual ~PortMappingIsolatorProcess() {}
 
@@ -142,7 +142,7 @@ public:
       const ContainerID& containerId,
       pid_t pid);
 
-  virtual process::Future<Limitation> watch(
+  virtual process::Future<mesos::slave::Limitation> watch(
       const ContainerID& containerId);
 
   virtual process::Future<Nothing> update(

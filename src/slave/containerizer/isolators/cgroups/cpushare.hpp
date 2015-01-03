@@ -37,10 +37,10 @@ namespace slave {
 // Completely Fair Scheduler (CFS).
 // - cpushare implements proportionally weighted scheduling.
 // - cfs implements hard quota based scheduling.
-class CgroupsCpushareIsolatorProcess : public IsolatorProcess
+class CgroupsCpushareIsolatorProcess : public mesos::slave::IsolatorProcess
 {
 public:
-  static Try<Isolator*> create(const Flags& flags);
+  static Try<mesos::slave::Isolator*> create(const Flags& flags);
 
   virtual ~CgroupsCpushareIsolatorProcess();
 
@@ -57,7 +57,7 @@ public:
       const ContainerID& containerId,
       pid_t pid);
 
-  virtual process::Future<Limitation> watch(
+  virtual process::Future<mesos::slave::Limitation> watch(
       const ContainerID& containerId);
 
   virtual process::Future<Nothing> update(
@@ -89,7 +89,7 @@ private:
     const std::string cgroup;
     Option<pid_t> pid;
 
-    process::Promise<Limitation> limitation;
+    process::Promise<mesos::slave::Limitation> limitation;
   };
 
   const Flags flags;

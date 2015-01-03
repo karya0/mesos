@@ -54,6 +54,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
+using mesos::slave::Limitation;
+
 using mesos::slave::state::RunState;
 
 Try<Isolator*> PosixDiskIsolatorProcess::create(const Flags& flags)

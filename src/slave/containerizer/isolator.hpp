@@ -34,7 +34,6 @@
 #include "slave/state.hpp"
 
 namespace mesos {
-namespace internal {
 namespace slave {
 
 // Forward declaration.
@@ -70,7 +69,7 @@ public:
 
   // Recover containers from the run states.
   process::Future<Nothing> recover(
-      const std::list<mesos::slave::state::RunState>& states);
+      const std::list<state::RunState>& states);
 
   // Prepare for isolation of the executor. Any steps that require execution in
   // the containerized context (e.g. inside a network namespace) can be
@@ -119,7 +118,7 @@ public:
   virtual ~IsolatorProcess() {}
 
   virtual process::Future<Nothing> recover(
-      const std::list<mesos::slave::state::RunState>& state) = 0;
+      const std::list<state::RunState>& state) = 0;
 
   virtual process::Future<Option<CommandInfo> > prepare(
       const ContainerID& containerId,
@@ -144,9 +143,7 @@ public:
   virtual process::Future<Nothing> cleanup(const ContainerID& containerId) = 0;
 };
 
-
 } // namespace slave {
-} // namespace internal {
 } // namespace mesos {
 
 #endif // __ISOLATOR_HPP__

@@ -37,6 +37,7 @@ using namespace mesos::internal;
 using namespace mesos::internal::slave;
 using namespace mesos::internal::tests;
 using namespace mesos::modules;
+using namespace mesos::slave;
 
 const char* DEFAULT_MODULE_LIBRARY_NAME = "examplemodule";
 const char* DEFAULT_MODULE_NAME = "org_apache_mesos_TestModule";

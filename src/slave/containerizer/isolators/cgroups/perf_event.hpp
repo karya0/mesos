@@ -35,10 +35,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-class CgroupsPerfEventIsolatorProcess : public IsolatorProcess
+class CgroupsPerfEventIsolatorProcess : public mesos::slave::IsolatorProcess
 {
 public:
-  static Try<Isolator*> create(const Flags& flags);
+  static Try<mesos::slave::Isolator*> create(const Flags& flags);
 
   virtual ~CgroupsPerfEventIsolatorProcess();
 
@@ -55,7 +55,7 @@ public:
       const ContainerID& containerId,
       pid_t pid);
 
-  virtual process::Future<Limitation> watch(
+  virtual process::Future<mesos::slave::Limitation> watch(
       const ContainerID& containerId);
 
   virtual process::Future<Nothing> update(

@@ -85,8 +85,6 @@ using mesos::internal::slave::CgroupsPerfEventIsolatorProcess;
 using mesos::internal::slave::Fetcher;
 using mesos::internal::slave::SharedFilesystemIsolatorProcess;
 #endif // __linux__
-using mesos::internal::slave::Isolator;
-using mesos::internal::slave::IsolatorProcess;
 using mesos::internal::slave::Launcher;
 using mesos::internal::slave::MesosContainerizer;
 using mesos::internal::slave::Slave;
@@ -97,6 +95,8 @@ using mesos::internal::slave::PosixLauncher;
 using mesos::internal::slave::PosixCpuIsolatorProcess;
 using mesos::internal::slave::PosixMemIsolatorProcess;
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
 
 using std::ostringstream;
 using std::set;

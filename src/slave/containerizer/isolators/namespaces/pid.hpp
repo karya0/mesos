@@ -37,10 +37,10 @@ namespace slave {
 // (see the LinuxLauncher for that) but it is used to keep track of a
 // container's pid namespace through a bind mount and exposed by
 // getNamespace().
-class NamespacesPidIsolatorProcess : public IsolatorProcess
+class NamespacesPidIsolatorProcess : public mesos::slave::IsolatorProcess
 {
 public:
-  static Try<Isolator*> create(const Flags& flags);
+  static Try<mesos::slave::Isolator*> create(const Flags& flags);
 
   // Return the pid namespace of the container. Returns None if the
   // container was not created in a separate pid namespace, i.e.,
@@ -69,7 +69,7 @@ public:
       const ContainerID& containerId,
       pid_t pid);
 
-  virtual process::Future<Limitation> watch(
+  virtual process::Future<mesos::slave::Limitation> watch(
       const ContainerID& containerId);
 
   virtual process::Future<Nothing> update(

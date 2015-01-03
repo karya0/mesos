@@ -31,10 +31,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-class CgroupsMemIsolatorProcess : public IsolatorProcess
+class CgroupsMemIsolatorProcess : public mesos::slave::IsolatorProcess
 {
 public:
-  static Try<Isolator*> create(const Flags& flags);
+  static Try<mesos::slave::Isolator*> create(const Flags& flags);
 
   virtual ~CgroupsMemIsolatorProcess();
 
@@ -51,7 +51,7 @@ public:
       const ContainerID& containerId,
       pid_t pid);
 
-  virtual process::Future<Limitation> watch(
+  virtual process::Future<mesos::slave::Limitation> watch(
       const ContainerID& containerId);
 
   virtual process::Future<Nothing> update(
@@ -83,7 +83,7 @@ private:
     const std::string cgroup;
     Option<pid_t> pid;
 
-    process::Promise<Limitation> limitation;
+    process::Promise<mesos::slave::Limitation> limitation;
 
     // Used to cancel the OOM listening.
     process::Future<Nothing> oomNotifier;
