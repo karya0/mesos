@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-#ifndef __MODULE_ISOLATOR_HPP__
-#define __MODULE_ISOLATOR_HPP__
+#pragma once
 
 #include <mesos/mesos.hpp>
 #include <mesos/module.hpp>
+
 #include <mesos/slave/isolator.hpp>
 
 namespace mesos {
@@ -60,5 +60,3 @@ struct Module<mesos::slave::Isolator> : ModuleBase
 
 } // namespace modules {
 } // namespace mesos {
-
-#endif // __MODULE_ISOLATOR_HPP__
