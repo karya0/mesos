@@ -30,6 +30,8 @@
 #include <mesos/resources.hpp>
 #include <mesos/type_utils.hpp>
 
+#include <mesos/module/authenticatee.hpp>
+
 #include <mesos/slave/state.hpp>
 
 #include <process/http.hpp>
@@ -68,8 +70,6 @@ namespace mesos {
 namespace internal {
 
 class MasterDetector; // Forward declaration.
-
-class Authenticatee;
 
 namespace slave {
 

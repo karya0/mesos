@@ -331,6 +331,8 @@ libmesos_no_3rdparty_la_SOURCES =					\
 	messages/messages.proto
 
 pkginclude_HEADERS =							\
+  $(top_srcdir)/include/mesos/authenticatee.hpp				\
+  $(top_srcdir)/include/mesos/authenticator.hpp				\
   $(top_srcdir)/include/mesos/executor.hpp				\
   $(top_srcdir)/include/mesos/mesos.hpp					\
   $(top_srcdir)/include/mesos/module.hpp				\
@@ -363,6 +365,8 @@ nodist_fetcher_HEADERS = ../include/mesos/fetcher/fetcher.pb.h
 moduledir = $(pkgincludedir)/module
 
 module_HEADERS =							\
+  $(top_srcdir)/include/mesos/module/authenticatee.hpp			\
+  $(top_srcdir)/include/mesos/module/authenticator.hpp			\
   $(top_srcdir)/include/mesos/module/isolator.hpp
 
 schedulerdir = $(pkgincludedir)/scheduler
@@ -431,8 +435,6 @@ if WITH_NETWORK_ISOLATOR
 endif
 
 libmesos_no_3rdparty_la_SOURCES +=					\
-	authentication/authenticatee.hpp				\
-	authentication/authenticator.hpp				\
 	authentication/cram_md5/authenticatee.hpp			\
 	authentication/cram_md5/authenticator.hpp			\
 	authentication/cram_md5/auxprop.hpp				\
@@ -475,8 +477,6 @@ libmesos_no_3rdparty_la_SOURCES +=					\
 	master/registrar.hpp						\
 	master/sorter.hpp						\
 	messages/messages.hpp						\
-	module/authenticatee.hpp					\
-	module/authenticator.hpp					\
 	module/hook.hpp							\
 	module/manager.hpp						\
 	sched/constants.hpp						\

@@ -16,25 +16,24 @@
  * limitations under the License.
  */
 
-#ifndef __MODULE_AUTHENTICATOR_HPP__
-#define __MODULE_AUTHENTICATOR_HPP__
+#pragma once
 
+#include <mesos/authenticatee.hpp>
+#include <mesos/mesos.hpp>
 #include <mesos/module.hpp>
-
-#include "authentication/authenticator.hpp"
 
 namespace mesos {
 namespace modules {
 
 template<>
-inline const char* kind<mesos::internal::Authenticator>()
+inline const char* kind<mesos::Authenticatee>()
 {
-  return "Authenticator";
+  return "Authenticatee";
 }
 
 
 template <>
-struct Module<mesos::internal::Authenticator> : ModuleBase
+struct Module<mesos::Authenticatee> : ModuleBase
 {
   Module(
       const char* _moduleApiVersion,
@@ -43,11 +42,11 @@ struct Module<mesos::internal::Authenticator> : ModuleBase
       const char* _authorEmail,
       const char* _description,
       bool (*_compatible)(),
-      mesos::internal::Authenticator* (*_create)(const Parameters& parameters))
+      mesos::Authenticatee* (*_create)(const Parameters& parameters))
     : ModuleBase(
         _moduleApiVersion,
         _mesosVersion,
-        mesos::modules::kind<mesos::internal::Authenticator>(),
+        mesos::modules::kind<mesos::Authenticatee>(),
         _authorName,
         _authorEmail,
         _description,
@@ -55,10 +54,8 @@ struct Module<mesos::internal::Authenticator> : ModuleBase
       create(_create)
   { }
 
-  mesos::internal::Authenticator* (*create)(const Parameters& parameters);
+  mesos::Authenticatee* (*create)(const Parameters& parameters);
 };
 
 } // namespace modules {
 } // namespace mesos {
-
-#endif // __MODULE_AUTHENTICATOR_HPP__
