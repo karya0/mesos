@@ -55,6 +55,7 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::state::RunState;
 
 template<class T>
 static Future<Option<T> > none() { return None(); }
@@ -131,11 +132,11 @@ Try<Isolator*> CgroupsMemIsolatorProcess::create(const Flags& flags)
 
 
 Future<Nothing> CgroupsMemIsolatorProcess::recover(
-    const list<state::RunState>& states)
+    const list<RunState>& states)
 {
   hashset<string> cgroups;
 
-  foreach (const state::RunState& state, states) {
+  foreach (const RunState& state, states) {
     if (state.id.isNone()) {
       foreachvalue (Info* info, infos) {
         delete info;

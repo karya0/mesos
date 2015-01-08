@@ -144,7 +144,7 @@ TYPED_TEST_CASE(CpuIsolatorTest, CpuIsolatorTypes);
 
 TYPED_TEST(CpuIsolatorTest, UserCpuUsage)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   Try<Isolator*> isolator = TypeParam::create(flags);
   CHECK_SOME(isolator);
@@ -250,7 +250,7 @@ TYPED_TEST(CpuIsolatorTest, UserCpuUsage)
 
 TYPED_TEST(CpuIsolatorTest, SystemCpuUsage)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   Try<Isolator*> isolator = TypeParam::create(flags);
   CHECK_SOME(isolator);
@@ -360,7 +360,7 @@ class LimitedCpuIsolatorTest : public MesosTest {};
 
 TEST_F(LimitedCpuIsolatorTest, ROOT_CGROUPS_Cfs)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   // Enable CFS to cap CPU utilization.
   flags.cgroups_enable_cfs = true;
@@ -467,7 +467,7 @@ TEST_F(LimitedCpuIsolatorTest, ROOT_CGROUPS_Cfs)
 // of cpus that an executor can use based on the slave cpus.
 TEST_F(LimitedCpuIsolatorTest, ROOT_CGROUPS_Cfs_Big_Quota)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   // Enable CFS to cap CPU utilization.
   flags.cgroups_enable_cfs = true;
@@ -606,7 +606,7 @@ int consumeMemory(const Bytes& _size, const Duration& duration, int pipes[2])
 
 TYPED_TEST(MemIsolatorTest, MemUsage)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   Try<Isolator*> isolator = TypeParam::create(flags);
   CHECK_SOME(isolator);
@@ -700,7 +700,7 @@ class PerfEventIsolatorTest : public MesosTest {};
 
 TEST_F(PerfEventIsolatorTest, ROOT_CGROUPS_Sample)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   flags.perf_events = "cycles,task-clock";
   flags.perf_duration = Milliseconds(250);
@@ -778,7 +778,7 @@ class SharedFilesystemIsolatorTest : public MesosTest {};
 // under the container's work directory.
 TEST_F(SharedFilesystemIsolatorTest, ROOT_RelativeVolume)
 {
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "filesystem/shared";
 
   Try<Isolator*> isolator = SharedFilesystemIsolatorProcess::create(flags);
@@ -872,7 +872,7 @@ TEST_F(SharedFilesystemIsolatorTest, ROOT_RelativeVolume)
 
 TEST_F(SharedFilesystemIsolatorTest, ROOT_AbsoluteVolume)
 {
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "filesystem/shared";
 
   Try<Isolator*> isolator = SharedFilesystemIsolatorProcess::create(flags);
@@ -949,7 +949,7 @@ class NamespacesPidIsolatorTest : public MesosTest {};
 
 TEST_F(NamespacesPidIsolatorTest, ROOT_PidNamespace)
 {
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "namespaces/pid";
 
   string directory = os::getcwd(); // We're inside a temporary sandbox.
@@ -1047,7 +1047,7 @@ TYPED_TEST_CASE(UserCgroupIsolatorTest, CgroupsIsolatorTypes);
 
 TYPED_TEST(UserCgroupIsolatorTest, ROOT_CGROUPS_UserCgroup)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.perf_events = "cpu-cycles"; // Needed for CgroupsPerfEventIsolator.
 
   Try<Isolator*> isolator = TypeParam::create(flags);

@@ -90,7 +90,7 @@ TEST_F(MasterContenderDetectorTest, File)
   // Write "master" to a file and use the "file://" mechanism to
   // create a master detector for the slave. Still requires a master
   // detector for the master first.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   const string& path = path::join(flags.work_dir, "master");
   ASSERT_SOME(os::write(path, stringify(master.get())));

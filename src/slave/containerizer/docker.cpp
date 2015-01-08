@@ -65,11 +65,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-using state::SlaveState;
-using state::FrameworkState;
-using state::ExecutorState;
-using state::RunState;
-
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::SlaveState;
 
 // Declared in header, see explanation there.
 // TODO(benh): At some point to run multiple slaves we'll need to make
@@ -265,8 +264,8 @@ Try<Nothing> DockerContainerizerProcess::checkpoint(
 
   if (container->checkpoint) {
     const string& path =
-      slave::paths::getForkedPidPath(
-          slave::paths::getMetaRootDir(flags.work_dir),
+      paths::getForkedPidPath(
+          paths::getMetaRootDir(flags.work_dir),
           container->slaveId,
           container->executor.framework_id(),
           container->executor.executor_id(),
@@ -274,7 +273,7 @@ Try<Nothing> DockerContainerizerProcess::checkpoint(
 
     LOG(INFO) << "Checkpointing pid " << pid << " to '" << path <<  "'";
 
-    return slave::state::checkpoint(path, stringify(pid));
+    return mesos::slave::state::checkpoint(path, stringify(pid));
   }
 
   return Nothing();

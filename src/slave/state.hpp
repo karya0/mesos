@@ -37,7 +37,6 @@
 #include <stout/uuid.hpp>
 
 namespace mesos {
-namespace internal {
 namespace slave {
 namespace state {
 
@@ -206,7 +205,6 @@ struct TaskState
 
 } // namespace state {
 } // namespace slave {
-} // namespace internal {
 } // namespace mesos {
 
 #endif // __SLAVE_STATE_HPP__

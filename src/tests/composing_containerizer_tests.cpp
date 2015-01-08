@@ -40,6 +40,8 @@ using namespace mesos::internal::tests;
 
 using namespace process;
 
+using mesos::slave::state::SlaveState;
+
 using std::vector;
 
 using testing::_;
@@ -47,13 +49,13 @@ using testing::Return;
 
 class ComposingContainerizerTest : public MesosTest {};
 
-class MockContainerizer : public slave::Containerizer
+class MockContainerizer : public Containerizer
 {
 public:
   MOCK_METHOD1(
       recover,
       process::Future<Nothing>(
-          const Option<slave::state::SlaveState>&));
+          const Option<SlaveState>&));
 
   MOCK_METHOD7(
       launch,

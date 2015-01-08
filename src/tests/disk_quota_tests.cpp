@@ -152,7 +152,7 @@ TEST_F(DiskQuotaTest, DiskUsageExceedsQuota)
   Try<PID<Master>> master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem,posix/disk";
 
   // NOTE: We can't pause the clock because we need the reaper to reap
@@ -219,7 +219,7 @@ TEST_F(DiskQuotaTest, NoQuotaEnforcement)
   Try<PID<Master>> master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem,posix/disk";
 
   // NOTE: We can't pause the clock because we need the reaper to reap
@@ -318,7 +318,7 @@ TEST_F(DiskQuotaTest, ResourceStatistics)
   Try<PID<Master>> master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem,posix/disk";
 
   // NOTE: We can't pause the clock because we need the reaper to reap

@@ -29,6 +29,7 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::state::RunState;
 
 Isolator::Isolator(Owned<IsolatorProcess> _process)
   : process(_process)
@@ -44,7 +45,7 @@ Isolator::~Isolator()
 }
 
 
-Future<Nothing> Isolator::recover(const list<state::RunState>& state)
+Future<Nothing> Isolator::recover(const list<RunState>& state)
 {
   return dispatch(process.get(), &IsolatorProcess::recover, state);
 }

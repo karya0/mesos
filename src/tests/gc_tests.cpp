@@ -63,9 +63,15 @@ using namespace mesos::internal::tests;
 
 using mesos::internal::master::Master;
 
+using mesos::internal::slave::GC_DISK_HEADROOM;
 using mesos::internal::slave::GarbageCollector;
 using mesos::internal::slave::GarbageCollectorProcess;
 using mesos::internal::slave::Slave;
+using mesos::internal::slave::getContainerizerGracePeriod;
+
+using mesos::internal::slave::paths::getSlavePath;
+using mesos::internal::slave::paths::getFrameworkPath;
+using mesos::internal::slave::paths::getExecutorPath;
 
 using process::Clock;
 using process::Future;
@@ -262,7 +268,7 @@ TEST_F(GarbageCollectorIntegrationTest, Restart)
 
   // Need to create our own flags because we want to reuse them when
   // we (re)start the slave below.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
   ASSERT_SOME(slave);
@@ -308,7 +314,7 @@ TEST_F(GarbageCollectorIntegrationTest, Restart)
   // status update for a task because the directory won't get created
   // until the task is launched. We get the slave ID from the
   // SlaveRegisteredMessage.
-  const std::string& slaveDir = slave::paths::getSlavePath(
+  const std::string& slaveDir = getSlavePath(
       flags.work_dir,
       slaveRegisteredMessage.get().slave_id());
 
@@ -366,7 +372,7 @@ TEST_F(GarbageCollectorIntegrationTest, ExitedFramework)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
   ASSERT_SOME(slave);
@@ -441,7 +447,7 @@ TEST_F(GarbageCollectorIntegrationTest, ExitedFramework)
     FUTURE_DISPATCH(_, &GarbageCollectorProcess::schedule);
 
   // Advance clock to kill executor via isolator.
-  Clock::advance(slave::getContainerizerGracePeriod(
+  Clock::advance(getContainerizerGracePeriod(
       flags.executor_shutdown_grace_period));
 
   Clock::settle();
@@ -455,7 +461,7 @@ TEST_F(GarbageCollectorIntegrationTest, ExitedFramework)
   Clock::settle();
 
   // Framework's directory should be gc'ed by now.
-  const string& frameworkDir = slave::paths::getFrameworkPath(
+  const string& frameworkDir = getFrameworkPath(
       flags.work_dir, slaveId, frameworkId);
 
   ASSERT_FALSE(os::exists(frameworkDir));
@@ -483,7 +489,7 @@ TEST_F(GarbageCollectorIntegrationTest, ExitedExecutor)
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), _, _);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Try<PID<Slave> > slave = StartSlave(&containerizer, flags);
   ASSERT_SOME(slave);
@@ -529,7 +535,7 @@ TEST_F(GarbageCollectorIntegrationTest, ExitedExecutor)
   AWAIT_READY(status);
   EXPECT_EQ(TASK_RUNNING, status.get().state());
 
-  const std::string& executorDir = slave::paths::getExecutorPath(
+  const std::string& executorDir = getExecutorPath(
       flags.work_dir, slaveId, frameworkId.get(), DEFAULT_EXECUTOR_ID);
 
   ASSERT_TRUE(os::exists(executorDir));
@@ -587,7 +593,7 @@ TEST_F(GarbageCollectorIntegrationTest, DiskUsage)
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), _, _);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Try<PID<Slave> > slave = StartSlave(&containerizer, flags);
   ASSERT_SOME(slave);
@@ -628,7 +634,7 @@ TEST_F(GarbageCollectorIntegrationTest, DiskUsage)
   AWAIT_READY(status);
   EXPECT_EQ(TASK_RUNNING, status.get().state());
 
-  const std::string& executorDir = slave::paths::getExecutorPath(
+  const std::string& executorDir = getExecutorPath(
       flags.work_dir, slaveId, frameworkId.get(), DEFAULT_EXECUTOR_ID);
 
   ASSERT_TRUE(os::exists(executorDir));
@@ -667,7 +673,7 @@ TEST_F(GarbageCollectorIntegrationTest, DiskUsage)
   process::dispatch(
       slave.get(),
       &Slave::_checkDiskUsage,
-      Try<double>(1.0 - slave::GC_DISK_HEADROOM));
+      Try<double>(1.0 - GC_DISK_HEADROOM));
 
   AWAIT_READY(_checkDiskUsage);
 
@@ -716,7 +722,7 @@ TEST_F(GarbageCollectorIntegrationTest, Unschedule)
 
   TestContainerizer containerizer(execs);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Try<PID<Slave> > slave = StartSlave(&containerizer, flags);
   ASSERT_SOME(slave);

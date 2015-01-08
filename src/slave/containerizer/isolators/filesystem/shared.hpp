@@ -40,7 +40,7 @@ public:
   virtual ~SharedFilesystemIsolatorProcess();
 
   virtual process::Future<Nothing> recover(
-      const std::list<state::RunState>& states);
+      const std::list<mesos::slave::state::RunState>& states);
 
   virtual process::Future<Option<CommandInfo> > prepare(
       const ContainerID& containerId,

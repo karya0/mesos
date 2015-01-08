@@ -66,7 +66,7 @@ public:
   virtual ~DockerContainerizer();
 
   virtual process::Future<Nothing> recover(
-      const Option<state::SlaveState>& state);
+      const Option<mesos::slave::state::SlaveState>& state);
 
   virtual process::Future<bool> launch(
       const ContainerID& containerId,
@@ -120,7 +120,7 @@ public:
       docker(_docker) {}
 
   virtual process::Future<Nothing> recover(
-      const Option<state::SlaveState>& state);
+      const Option<mesos::slave::state::SlaveState>& state);
 
   virtual process::Future<bool> launch(
       const ContainerID& containerId,

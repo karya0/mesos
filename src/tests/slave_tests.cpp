@@ -61,16 +61,10 @@
 
 using namespace mesos;
 using namespace mesos::internal;
+using namespace mesos::internal::slave;
 using namespace mesos::internal::tests;
 
 using mesos::internal::master::Master;
-
-using mesos::internal::slave::Containerizer;
-using mesos::internal::slave::Fetcher;
-using mesos::internal::slave::GarbageCollectorProcess;
-using mesos::internal::slave::MesosContainerizer;
-using mesos::internal::slave::MesosContainerizerProcess;
-using mesos::internal::slave::Slave;
 
 using process::Clock;
 using process::Future;
@@ -104,7 +98,7 @@ TEST_F(SlaveTest, ShutdownUnregisteredExecutor)
   ASSERT_SOME(master);
 
   // Need flags for 'executor_registration_timeout'.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   // Set the isolation flag so we know a MesoContainerizer will be created.
   flags.isolation = "posix/cpu,posix/mem";
 
@@ -410,7 +404,7 @@ TEST_F(SlaveTest, MesosExecutorCommandTaskWithArgsList)
   ASSERT_SOME(master);
 
   // Need flags for 'executor_registration_timeout'.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -486,13 +480,13 @@ TEST_F(SlaveTest, GetExecutorInfo)
   // Create a thin dummy Slave to access underlying getExecutorInfo().
   // Testing this method should not necessarily require an integration
   // test as with most other methods here.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   TestContainerizer containerizer;
   StandaloneMasterDetector detector;
   Files files;
-  slave::StatusUpdateManager updateManager(flags);
+  StatusUpdateManager updateManager(flags);
 
-  slave::GarbageCollector gc;
+  GarbageCollector gc;
   Slave slave(flags, &detector, &containerizer, &files, &gc, &updateManager);
 
   FrameworkID frameworkId;
@@ -534,7 +528,7 @@ TEST_F(SlaveTest, ROOT_RunTaskWithCommandInfoWithoutUser)
   ASSERT_SOME(master);
 
   // Need flags for 'executor_registration_timeout'.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -630,7 +624,7 @@ TEST_F(SlaveTest, ROOT_RunTaskWithCommandInfoWithUser)
   ASSERT_SOME(master);
 
   // Need flags for 'executor_registration_timeout'.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -790,7 +784,7 @@ TEST_F(SlaveTest, IgnoreNonLeaderStatusUpdateAcknowledgement)
   EXPECT_CALL(sched, statusUpdate(&schedDriver, _))
     .WillOnce(FutureArg<1>(&retriedUpdate));
 
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
 
   AWAIT_READY(retriedUpdate);
 
@@ -882,7 +876,7 @@ TEST_F(SlaveTest, StateEndpoint)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   flags.resources = "cpus:4;mem:2048;disk:512;ports:[33000-34000]";
   flags.attributes = "rack:abc;host:myhost";
@@ -939,13 +933,13 @@ TEST_F(SlaveTest, TerminatingSlaveDoesNotReregister)
   // Create a StandaloneMasterDetector to enable the slave to trigger
   // re-registration later.
   StandaloneMasterDetector detector(master.get());
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   // Make the executor_shutdown_grace_period to be much longer than
   // REGISTER_RETRY_INTERVAL, so that the slave will at least call
   // call doReliableRegistration() once before the slave is actually
   // terminated.
-  flags.executor_shutdown_grace_period = slave::REGISTER_RETRY_INTERVAL_MAX * 2;
+  flags.executor_shutdown_grace_period = REGISTER_RETRY_INTERVAL_MAX * 2;
 
   // Start a slave.
   Try<PID<Slave> > slave = StartSlave(&exec, &detector, flags);
@@ -1011,7 +1005,7 @@ TEST_F(SlaveTest, TerminatingSlaveDoesNotReregister)
   process::post(master.get(), slave.get(), ShutdownMessage());
 
   // Advance the clock to trigger doReliableRegistration().
-  Clock::advance(slave::REGISTER_RETRY_INTERVAL_MAX * 2);
+  Clock::advance(REGISTER_RETRY_INTERVAL_MAX * 2);
   Clock::settle();
   Clock::resume();
 
@@ -1150,7 +1144,7 @@ TEST_F(SlaveTest, PingTimeoutNoPings)
   Future<SlaveReregisteredMessage> slaveReregisteredMessage =
     FUTURE_PROTOBUF(SlaveReregisteredMessage(), _, _);
 
-  Clock::advance(slave::MASTER_PING_TIMEOUT());
+  Clock::advance(MASTER_PING_TIMEOUT());
 
   AWAIT_READY(detected);
   AWAIT_READY(slaveReregisteredMessage);
@@ -1193,7 +1187,7 @@ TEST_F(SlaveTest, PingTimeoutSomePings)
   Future<SlaveReregisteredMessage> slaveReregisteredMessage =
     FUTURE_PROTOBUF(SlaveReregisteredMessage(), _, _);
 
-  Clock::advance(slave::MASTER_PING_TIMEOUT());
+  Clock::advance(MASTER_PING_TIMEOUT());
 
   AWAIT_READY(detected);
   AWAIT_READY(slaveReregisteredMessage);
@@ -1560,24 +1554,24 @@ TEST_F(SlaveTest, TaskLabels)
 // expected.
 TEST_F(SlaveTest, ShutdownGracePeriod)
 {
-  Duration defaultTimeout = slave::EXECUTOR_SHUTDOWN_GRACE_PERIOD;
+  Duration defaultTimeout = EXECUTOR_SHUTDOWN_GRACE_PERIOD;
   Duration customTimeout = Seconds(10);
 
   // We used to have a signal escalation timeout constant responsibe
   // for graceful shutdown period in the CommandExecutor. Make sure
   // the default behaviour (3s) persists.
-  EXPECT_EQ(Seconds(3), slave::getExecutorGracePeriod(defaultTimeout));
+  EXPECT_EQ(Seconds(3), getExecutorGracePeriod(defaultTimeout));
 
   // The new logic uses a certain delta to calculate nested timeouts.
-  EXPECT_EQ(Duration::zero(), slave::getExecutorGracePeriod(Duration::zero()));
-  EXPECT_EQ(Seconds(2), slave::getContainerizerGracePeriod(Duration::zero()));
+  EXPECT_EQ(Duration::zero(), getExecutorGracePeriod(Duration::zero()));
+  EXPECT_EQ(Seconds(2), getContainerizerGracePeriod(Duration::zero()));
   EXPECT_EQ(customTimeout + Seconds(2),
-            slave::getContainerizerGracePeriod(customTimeout));
+            getContainerizerGracePeriod(customTimeout));
 
   // The grace period in ExecutorProcess should be bigger than the
   // grace period in an executor.
-  EXPECT_GT(slave::getExecGracePeriod(defaultTimeout),
-            slave::getExecutorGracePeriod(defaultTimeout));
+  EXPECT_GT(getExecGracePeriod(defaultTimeout),
+            getExecutorGracePeriod(defaultTimeout));
 
   // Check the graceful shutdown periods that reach the executor in
   // protobuf messages.
@@ -1589,8 +1583,8 @@ TEST_F(SlaveTest, ShutdownGracePeriod)
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
   TestContainerizer containerizer(&exec);
 
-  slave::Flags flags = CreateSlaveFlags();
-  flags.executor_shutdown_grace_period = slave::EXECUTOR_SHUTDOWN_GRACE_PERIOD;
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
+  flags.executor_shutdown_grace_period = EXECUTOR_SHUTDOWN_GRACE_PERIOD;
 
   Try<PID<Slave>> slave = StartSlave(&containerizer, flags);
   ASSERT_SOME(slave);
@@ -1673,12 +1667,11 @@ TEST_F(SlaveTest, MesosExecutorGracefulShutdown)
   ASSERT_SOME(master);
 
   // Explicitly set the grace period for slave default.
-  slave::Flags flags = CreateSlaveFlags();
-  flags.executor_shutdown_grace_period = slave::EXECUTOR_SHUTDOWN_GRACE_PERIOD;
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
+  flags.executor_shutdown_grace_period = EXECUTOR_SHUTDOWN_GRACE_PERIOD;
 
   // Ensure escalation timeout is more than the maximal reap interval.
-  auto timeout = slave::getExecutorGracePeriod(
-      slave::EXECUTOR_SHUTDOWN_GRACE_PERIOD);
+  auto timeout = getExecutorGracePeriod(EXECUTOR_SHUTDOWN_GRACE_PERIOD);
   EXPECT_LT(process::MAX_REAP_INTERVAL(), timeout);
 
   Fetcher fetcher;

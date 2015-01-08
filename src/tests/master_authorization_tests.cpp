@@ -381,7 +381,7 @@ TEST_F(MasterAuthorizationTest, SlaveDisconnected)
 
   // Create a checkpointing slave so that a disconnected slave is not
   // immediately removed.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
   ASSERT_SOME(slave);

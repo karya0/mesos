@@ -53,12 +53,11 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-using state::SlaveState;
-using state::FrameworkState;
-using state::ExecutorState;
-using state::RunState;
-using state::TaskState;
-
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::SlaveState;
+using mesos::slave::state::TaskState;
 
 class StatusUpdateManagerProcess
   : public ProtobufProcess<StatusUpdateManagerProcess>

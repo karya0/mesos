@@ -240,9 +240,9 @@ protected:
     TemporaryDirectoryTest::TearDown();
   }
 
-  slave::Flags CreateSlaveFlags()
+  mesos::internal::slave::Flags CreateSlaveFlags()
   {
-    slave::Flags flags;
+    mesos::internal::slave::Flags flags;
 
     flags.launcher_dir = path::join(tests::flags.build_dir, "src");
 
@@ -308,7 +308,7 @@ protected:
     return pid;
   }
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   // Name of the host eth0 and lo.
   string eth0;
@@ -1575,9 +1575,9 @@ TEST_F(PortMappingIsolatorTest, ROOT_ExportRTTTest)
 class PortMappingMesosTest : public ContainerizerTest<MesosContainerizer>
 {
 public:
-  slave::Flags CreateSlaveFlags()
+  mesos::internal::slave::Flags CreateSlaveFlags()
   {
-    slave::Flags flags =
+    mesos::internal::slave::Flags flags =
       ContainerizerTest<MesosContainerizer>::CreateSlaveFlags();
 
     // Setup recovery slave flags.
@@ -1619,7 +1619,7 @@ public:
     ContainerizerTest<MesosContainerizer>::TearDown();
   }
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   Fetcher fetcher;
 
@@ -1634,7 +1634,7 @@ public:
 // by network isolator, and containers that weren't.
 TEST_F(PortMappingMesosTest, ROOT_RecoverMixedContainersTest)
 {
-  slave::Flags flagsNoNetworkIsolator = flags;
+  mesos::internal::slave::Flags flagsNoNetworkIsolator = flags;
 
   vector<string> isolations = strings::split(flags.isolation, ",");
   ASSERT_NE(0u, isolations.size());

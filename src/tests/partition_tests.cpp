@@ -45,6 +45,7 @@ using mesos::internal::master::Master;
 
 using mesos::internal::master::allocator::AllocatorProcess;
 
+using mesos::internal::slave::MASTER_PING_TIMEOUT;
 using mesos::internal::slave::Slave;
 
 using process::Clock;
@@ -435,7 +436,7 @@ TEST_F(PartitionTest, OneWayPartitionMasterToSlave)
   Future<Message> ping = FUTURE_MESSAGE(Eq("PING"), _, _);
 
   // Start a checkpointing slave.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
   Try<PID<Slave> > slave = StartSlave(flags);
   ASSERT_SOME(slave);
@@ -463,7 +464,7 @@ TEST_F(PartitionTest, OneWayPartitionMasterToSlave)
   Clock::settle();
 
   // Let the slave observer send the next ping.
-  Clock::advance(slave::MASTER_PING_TIMEOUT());
+  Clock::advance(MASTER_PING_TIMEOUT());
 
   // Slave should re-register.
   AWAIT_READY(slaveReregisteredMessage);

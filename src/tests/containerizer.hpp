@@ -95,7 +95,7 @@ public:
 
   MOCK_METHOD1(
       recover,
-      process::Future<Nothing>(const Option<slave::state::SlaveState>&));
+      process::Future<Nothing>(const Option<mesos::slave::state::SlaveState>&));
 
   MOCK_METHOD2(
       update,

@@ -27,7 +27,6 @@ namespace mesos {
 namespace internal {
 namespace tests {
 
-
 class TestIsolatorProcess : public slave::IsolatorProcess
 {
 public:
@@ -41,7 +40,8 @@ public:
 
   MOCK_METHOD1(
       recover,
-      process::Future<Nothing>(const std::list<slave::state::RunState>&));
+      process::Future<Nothing>(
+        const std::list<mesos::slave::state::RunState>&));
 
   virtual process::Future<Option<CommandInfo> > prepare(
       const ContainerID& containerId,

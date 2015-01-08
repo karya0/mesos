@@ -82,6 +82,7 @@
 #include "slave/graceful_shutdown.hpp"
 #include "slave/paths.hpp"
 #include "slave/slave.hpp"
+#include "slave/state.hpp"
 #include "slave/status_update_manager.hpp"
 
 using std::list;
@@ -103,7 +104,11 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-using namespace state;
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::SlaveState;
+using mesos::slave::state::TaskState;
 
 Slave::Slave(const slave::Flags& _flags,
              MasterDetector* _detector,
@@ -484,7 +489,7 @@ void Slave::initialize()
   }
 
   // Do recovery.
-  async(&state::recover, metaDir, flags.strict)
+  async(&mesos::slave::state::recover, metaDir, flags.strict)
     .then(defer(self(), &Slave::recover, lambda::_1))
     .then(defer(self(), &Slave::_recover))
     .onAny(defer(self(), &Slave::__recover, lambda::_1));
@@ -796,7 +801,7 @@ void Slave::registered(const UPID& from, const SlaveID& slaveId)
         const string& path = paths::getSlaveInfoPath(metaDir, slaveId);
 
         VLOG(1) << "Checkpointing SlaveInfo to '" << path << "'";
-        CHECK_SOME(state::checkpoint(path, info));
+        CHECK_SOME(mesos::slave::state::checkpoint(path, info));
       }
 
       // If we don't get a ping from the master, trigger a
@@ -1770,7 +1775,7 @@ void Slave::updateFramework(const FrameworkID& frameworkId, const string& pid)
 
         VLOG(1) << "Checkpointing framework pid '"
                 << framework->pid << "' to '" << path << "'";
-        CHECK_SOME(state::checkpoint(path, framework->pid));
+        CHECK_SOME(mesos::slave::state::checkpoint(path, framework->pid));
       }
 
       // Inform status update manager to immediately resend any pending
@@ -1998,7 +2003,7 @@ void Slave::registerExecutor(
 
         VLOG(1) << "Checkpointing executor pid '"
                 << executor->pid << "' to '" << path << "'";
-        CHECK_SOME(state::checkpoint(path, executor->pid));
+        CHECK_SOME(mesos::slave::state::checkpoint(path, executor->pid));
       }
 
       // First account for the tasks we're about to start.
@@ -3386,7 +3391,7 @@ void Slave::_checkDiskUsage(const Future<double>& usage)
 
 
 
-Future<Nothing> Slave::recover(const Result<state::State>& state)
+Future<Nothing> Slave::recover(const Result<mesos::slave::state::State>& state)
 {
   if (state.isError()) {
     return Failure(state.error());
@@ -3437,8 +3442,7 @@ Future<Nothing> Slave::recover(const Result<state::State>& state)
 }
 
 
-Future<Nothing> Slave::_recoverContainerizer(
-    const Option<state::SlaveState>& state)
+Future<Nothing> Slave::_recoverContainerizer(const Option<SlaveState>& state)
 {
   return containerizer->recover(state);
 }
@@ -3527,7 +3531,7 @@ void Slave::__recover(const Future<Nothing>& future)
     LOG(ERROR) << "Could not retrieve boot id: " << bootId.error();
   } else {
     const string& path = paths::getBootIdPath(metaDir);
-    CHECK_SOME(state::checkpoint(path, bootId.get()));
+    CHECK_SOME(mesos::slave::state::checkpoint(path, bootId.get()));
   }
 
   // Schedule all old slave directories for garbage collection.
@@ -3845,7 +3849,7 @@ Framework::Framework(
         slave->metaDir, slave->info.id(), id);
 
     VLOG(1) << "Checkpointing FrameworkInfo to '" << path << "'";
-    CHECK_SOME(state::checkpoint(path, info));
+    CHECK_SOME(mesos::slave::state::checkpoint(path, info));
 
     // Checkpoint the framework pid.
     path = paths::getFrameworkPidPath(
@@ -3853,7 +3857,7 @@ Framework::Framework(
 
     VLOG(1) << "Checkpointing framework pid '"
             << pid << "' to '" << path << "'";
-    CHECK_SOME(state::checkpoint(path, pid));
+    CHECK_SOME(mesos::slave::state::checkpoint(path, pid));
   }
 }
 
@@ -4288,7 +4292,7 @@ void Executor::checkpointExecutor()
       slave->metaDir, slave->info.id(), frameworkId, id);
 
   VLOG(1) << "Checkpointing ExecutorInfo to '" << path << "'";
-  CHECK_SOME(state::checkpoint(path, info));
+  CHECK_SOME(mesos::slave::state::checkpoint(path, info));
 
   // Create the meta executor directory.
   // NOTE: This creates the 'latest' symlink in the meta directory.
@@ -4311,7 +4315,7 @@ void Executor::checkpointTask(const TaskInfo& task)
       t.task_id());
 
   VLOG(1) << "Checkpointing TaskInfo to '" << path << "'";
-  CHECK_SOME(state::checkpoint(path, t));
+  CHECK_SOME(mesos::slave::state::checkpoint(path, t));
 }
 
 

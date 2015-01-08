@@ -85,7 +85,7 @@ TEST_F(AuthenticationTest, UnauthenticatedSlave)
     FUTURE_PROTOBUF(ShutdownMessage(), _, _);
 
   // Start the slave without credentials.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.credential = None();
 
   Try<PID<Slave> > slave = StartSlave(flags);
@@ -143,7 +143,7 @@ TEST_F(AuthenticationTest, DisableSlaveAuthentication)
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), _, _);
 
   // Start the slave without credentials.
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.credential = None();
 
   Try<PID<Slave> > slave = StartSlave(slaveFlags);
@@ -272,7 +272,7 @@ TEST_F(AuthenticationTest, AuthenticatedSlave)
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), _, _);
 
   // Start the slave with credentials.
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   Try<PID<Slave> > slave = StartSlave(slaveFlags);
   ASSERT_SOME(slave);
 
@@ -334,7 +334,7 @@ TEST_F(AuthenticationTest, RetrySlaveAuthentication)
   Future<AuthenticateMessage> authenticateMessage =
     DROP_PROTOBUF(AuthenticateMessage(), _, _);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   Try<PID<Slave> > slave = StartSlave(slaveFlags);
   ASSERT_SOME(slave);
 
@@ -415,7 +415,7 @@ TEST_F(AuthenticationTest, DropIntermediateSASLMessageForSlave)
   Future<AuthenticationStepMessage> authenticationStepMessage =
     DROP_PROTOBUF(AuthenticationStepMessage(), _, _);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   Try<PID<Slave> > slave = StartSlave(slaveFlags);
   ASSERT_SOME(slave);
 
@@ -508,7 +508,7 @@ TEST_F(AuthenticationTest, DropFinalSASLMessageForSlave)
   Future<AuthenticationCompletedMessage> authenticationCompletedMessage =
     DROP_PROTOBUF(AuthenticationCompletedMessage(), _, _);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   Try<PID<Slave> > slave = StartSlave(slaveFlags);
   ASSERT_SOME(slave);
 
@@ -594,7 +594,7 @@ TEST_F(AuthenticationTest, MasterFailoverDuringSlaveAuthentication)
     DROP_PROTOBUF(AuthenticateMessage(), _, _);
 
   StandaloneMasterDetector detector(master.get());
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   Try<PID<Slave> > slave = StartSlave(&detector, slaveFlags);
   ASSERT_SOME(slave);
 
@@ -672,7 +672,7 @@ TEST_F(AuthenticationTest, LeaderElectionDuringSlaveAuthentication)
     DROP_PROTOBUF(AuthenticationStepMessage(), _, _);
 
   StandaloneMasterDetector detector(master.get());
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   Try<PID<Slave> > slave = StartSlave(&detector, slaveFlags);
   ASSERT_SOME(slave);
 

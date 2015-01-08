@@ -67,10 +67,10 @@ namespace slave {
 
 using mesos::modules::ModuleManager;
 
-using state::SlaveState;
-using state::FrameworkState;
-using state::ExecutorState;
-using state::RunState;
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::SlaveState;
 
 // Local function declaration/definitions.
 Future<Nothing> _nothing() { return Nothing(); }
@@ -203,8 +203,7 @@ MesosContainerizer::~MesosContainerizer()
 }
 
 
-Future<Nothing> MesosContainerizer::recover(
-    const Option<state::SlaveState>& state)
+Future<Nothing> MesosContainerizer::recover(const Option<SlaveState>& state)
 {
   return dispatch(process.get(), &MesosContainerizerProcess::recover, state);
 }
@@ -295,7 +294,7 @@ Future<hashset<ContainerID>> MesosContainerizer::containers()
 
 
 Future<Nothing> MesosContainerizerProcess::recover(
-    const Option<state::SlaveState>& state)
+    const Option<SlaveState>& state)
 {
   LOG(INFO) << "Recovering containerizer";
 
@@ -645,8 +644,8 @@ Future<bool> MesosContainerizerProcess::_launch(
 
   // Checkpoint the executor's pid if requested.
   if (checkpoint) {
-    const string& path = slave::paths::getForkedPidPath(
-        slave::paths::getMetaRootDir(flags.work_dir),
+    const string& path = paths::getForkedPidPath(
+        paths::getMetaRootDir(flags.work_dir),
         slaveId,
         executorInfo.framework_id(),
         executorInfo.executor_id(),
@@ -656,7 +655,7 @@ Future<bool> MesosContainerizerProcess::_launch(
               << " to '" << path <<  "'";
 
     Try<Nothing> checkpointed =
-      slave::state::checkpoint(path, stringify(pid));
+      mesos::slave::state::checkpoint(path, stringify(pid));
 
     if (checkpointed.isError()) {
       LOG(ERROR) << "Failed to checkpoint executor's forked pid to '"

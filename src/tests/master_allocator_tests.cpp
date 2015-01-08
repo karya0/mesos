@@ -101,7 +101,7 @@ TYPED_TEST(MasterAllocatorTest, MockAllocator)
   Try<PID<Master> > master = this->StartMaster(&this->allocator);
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:2;mem:1024;disk:0");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -159,7 +159,7 @@ TYPED_TEST(MasterAllocatorTest, ResourcesUnused)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags1 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags1 = this->CreateSlaveFlags();
   flags1.resources = Some("cpus:2;mem:1024");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -270,7 +270,7 @@ TYPED_TEST(MasterAllocatorTest, OutOfOrderDispatch)
   Try<PID<Master> > master = this->StartMaster(&this->allocator);
   ASSERT_SOME(master);
 
-  slave::Flags flags1 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags1 = this->CreateSlaveFlags();
   flags1.resources = Some("cpus:2;mem:1024");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -403,7 +403,7 @@ TYPED_TEST(MasterAllocatorTest, SchedulerFailover)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:3;mem:1024");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -546,7 +546,7 @@ TYPED_TEST(MasterAllocatorTest, FrameworkExited)
 
   TestContainerizer containerizer(execs);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   flags.resources = Some("cpus:3;mem:1024");
 
@@ -688,7 +688,7 @@ TYPED_TEST(MasterAllocatorTest, SlaveLost)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags1 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags1 = this->CreateSlaveFlags();
   flags1.resources = Some("cpus:2;mem:1024");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -753,7 +753,7 @@ TYPED_TEST(MasterAllocatorTest, SlaveLost)
 
   AWAIT_READY(removeSlave);
 
-  slave::Flags flags2 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags2 = this->CreateSlaveFlags();
   flags2.resources = string("cpus:3;mem:256;disk:1024;ports:[31000-32000]");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -807,7 +807,7 @@ TYPED_TEST(MasterAllocatorTest, SlaveAdded)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags1 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags1 = this->CreateSlaveFlags();
   flags1.resources = Some("cpus:3;mem:1024");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -856,7 +856,7 @@ TYPED_TEST(MasterAllocatorTest, SlaveAdded)
 
   AWAIT_READY(launchTask);
 
-  slave::Flags flags2 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags2 = this->CreateSlaveFlags();
   flags2.resources = Some("cpus:4;mem:2048");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -908,7 +908,7 @@ TYPED_TEST(MasterAllocatorTest, TaskFinished)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:3;mem:1024");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -1017,7 +1017,7 @@ TYPED_TEST(MasterAllocatorTest, CpusOnlyOfferedAndTaskLaunched)
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
   // Start a slave with cpus only resources.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:2;mem:0");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -1105,7 +1105,7 @@ TYPED_TEST(MasterAllocatorTest, MemoryOnlyOfferedAndTaskLaunched)
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
   // Start a slave with memory only resources.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:0;mem:200");
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
@@ -1325,7 +1325,7 @@ TYPED_TEST(MasterAllocatorTest, FrameworkReregistersFirst)
 
   StandaloneMasterDetector slaveDetector(master.get());
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:2;mem:1024");
 
   Try<PID<Slave> > slave = this->StartSlave(&exec, &slaveDetector, flags);
@@ -1450,7 +1450,7 @@ TYPED_TEST(MasterAllocatorTest, SlaveReregistersFirst)
 
   EXPECT_CALL(this->allocator, addSlave(_, _, _, _));
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.resources = Some("cpus:2;mem:1024");
 
   Try<PID<Slave> > slave = this->StartSlave(&exec, &slaveDetector, flags);

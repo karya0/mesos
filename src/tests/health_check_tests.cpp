@@ -145,7 +145,7 @@ TEST_F(HealthCheckTest, HealthyTask)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -244,7 +244,7 @@ TEST_F(HealthCheckTest, HealthyTaskNonShell)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -310,7 +310,7 @@ TEST_F(HealthCheckTest, HealthStatusChange)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -402,7 +402,7 @@ TEST_F(HealthCheckTest, DISABLED_ConsecutiveFailures)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -489,7 +489,7 @@ TEST_F(HealthCheckTest, EnvironmentSetup)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;
@@ -553,7 +553,7 @@ TEST_F(HealthCheckTest, DISABLED_GracePeriod)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.isolation = "posix/cpu,posix/mem";
 
   Fetcher fetcher;

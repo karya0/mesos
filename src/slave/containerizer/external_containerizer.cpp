@@ -50,7 +50,6 @@
 
 #include "slave/containerizer/external_containerizer.hpp"
 
-
 using lambda::bind;
 
 using std::list;
@@ -68,11 +67,10 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-using state::ExecutorState;
-using state::FrameworkState;
-using state::RunState;
-using state::SlaveState;
-
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::SlaveState;
 
 Try<ExternalContainerizer*> ExternalContainerizer::create(const Flags& flags)
 {
@@ -150,8 +148,7 @@ ExternalContainerizer::~ExternalContainerizer()
 }
 
 
-Future<Nothing> ExternalContainerizer::recover(
-    const Option<state::SlaveState>& state)
+Future<Nothing> ExternalContainerizer::recover(const Option<SlaveState>& state)
 {
   return dispatch(process, &ExternalContainerizerProcess::recover, state);
 }
@@ -244,7 +241,7 @@ ExternalContainerizerProcess::ExternalContainerizerProcess(
 
 
 Future<Nothing> ExternalContainerizerProcess::recover(
-    const Option<state::SlaveState>& state)
+    const Option<SlaveState>& state)
 {
   LOG(INFO) << "Recovering containerizer";
 
@@ -265,7 +262,7 @@ Future<Nothing> ExternalContainerizerProcess::recover(
 
 
 Future<Nothing> ExternalContainerizerProcess::_recover(
-    const Option<state::SlaveState>& state,
+    const Option<SlaveState>& state,
     const Future<Option<int> >& future)
 {
   VLOG(1) << "Recover validation callback triggered";
@@ -287,7 +284,7 @@ Future<Nothing> ExternalContainerizerProcess::_recover(
 
 
 Future<Nothing> ExternalContainerizerProcess::__recover(
-    const Option<state::SlaveState>& state,
+    const Option<SlaveState>& state,
     const hashset<ContainerID>& containers)
 {
   VLOG(1) << "Recover continuation triggered";
@@ -493,8 +490,8 @@ Future<bool> ExternalContainerizerProcess::launch(
   // checkpoint one. See MESOS-1328 and MESOS-923.
   // TODO(tillt): Remove this entirely as soon as MESOS-923 is fixed.
   if (checkpoint) {
-    const string& path = slave::paths::getForkedPidPath(
-        slave::paths::getMetaRootDir(flags.work_dir),
+    const string& path = paths::getForkedPidPath(
+        paths::getMetaRootDir(flags.work_dir),
         slaveId,
         executor.framework_id(),
         executor.executor_id(),
@@ -504,7 +501,7 @@ Future<bool> ExternalContainerizerProcess::launch(
               << " to '" << path <<  "'";
 
     Try<Nothing> checkpointed =
-      slave::state::checkpoint(path, stringify(invoked.get().pid()));
+      mesos::slave::state::checkpoint(path, stringify(invoked.get().pid()));
 
     if (checkpointed.isError()) {
       LOG(ERROR) << "Failed to checkpoint executor's forked pid to '"

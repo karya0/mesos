@@ -54,6 +54,8 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::state::RunState;
+
 Try<Isolator*> PosixDiskIsolatorProcess::create(const Flags& flags)
 {
   // TODO(jieyu): Check the availability of command 'du'.
@@ -77,9 +79,9 @@ PosixDiskIsolatorProcess::~PosixDiskIsolatorProcess() {}
 
 
 Future<Nothing> PosixDiskIsolatorProcess::recover(
-    const list<state::RunState>& states)
+    const list<RunState>& states)
 {
-  foreach (const state::RunState& state, states) {
+  foreach (const RunState& state, states) {
     if (state.id.isNone()) {
       infos.clear();
 

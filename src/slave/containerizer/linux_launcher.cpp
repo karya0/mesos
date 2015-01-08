@@ -51,7 +51,7 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-using state::RunState;
+using mesos::slave::state::RunState;
 
 LinuxLauncher::LinuxLauncher(
     const Flags& _flags,
@@ -125,7 +125,7 @@ Future<Nothing> _recover(const Future<list<Nothing> >& futures)
 }
 
 
-Future<Nothing> LinuxLauncher::recover(const std::list<state::RunState>& states)
+Future<Nothing> LinuxLauncher::recover(const std::list<RunState>& states)
 {
   hashset<string> cgroups;
 

@@ -55,7 +55,7 @@ using namespace process;
 using process::Subprocess;
 using process::Future;
 
-using slave::Fetcher;
+using mesos::internal::slave::Fetcher;
 
 using std::string;
 using std::map;
@@ -75,7 +75,7 @@ TEST_F(FetcherEnvironmentTest, Simple)
   string directory = "/tmp/directory";
   Option<string> user = "user";
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
   flags.hadoop_home = "/tmp/hadoop";
 
@@ -114,7 +114,7 @@ TEST_F(FetcherEnvironmentTest, MultipleURIs)
   string directory = "/tmp/directory";
   Option<string> user("user");
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
   flags.hadoop_home = "/tmp/hadoop";
 
@@ -148,7 +148,7 @@ TEST_F(FetcherEnvironmentTest, NoUser)
 
   string directory = "/tmp/directory";
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
   flags.hadoop_home = "/tmp/hadoop";
 
@@ -183,7 +183,7 @@ TEST_F(FetcherEnvironmentTest, EmptyHadoop)
   string directory = "/tmp/directory";
   Option<string> user = "user";
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
   flags.hadoop_home = "";
 
@@ -218,7 +218,7 @@ TEST_F(FetcherEnvironmentTest, NoHadoop)
   string directory = "/tmp/directory";
   Option<string> user = "user";
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
 
   map<string, string> environment =
@@ -253,7 +253,7 @@ TEST_F(FetcherEnvironmentTest, NoExtractNoExecutable)
   string directory = "/tmp/directory";
   Option<string> user = "user";
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
   flags.hadoop_home = "/tmp/hadoop";
 
@@ -289,7 +289,7 @@ TEST_F(FetcherEnvironmentTest, NoExtractExecutable)
   string directory = "/tmp/directory";
   Option<string> user = "user";
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
   flags.hadoop_home = "/tmp/hadoop";
 
@@ -327,7 +327,7 @@ TEST_F(FetcherTest, FileURI)
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
 
   CommandInfo commandInfo;
@@ -363,7 +363,7 @@ TEST_F(FetcherTest, FilePath)
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
 
   CommandInfo commandInfo;
@@ -416,7 +416,7 @@ TEST_F(FetcherTest, OSNetUriTest)
   string localFile = path::join(os::getcwd(), "help");
   EXPECT_FALSE(os::exists(localFile));
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
 
   CommandInfo commandInfo;
@@ -452,7 +452,7 @@ TEST_F(FetcherTest, FileLocalhostURI)
   string localFile = path::join(os::getcwd(), "test");
   EXPECT_FALSE(os::exists(localFile));
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.frameworks_home = "/tmp/frameworks";
 
   CommandInfo commandInfo;
@@ -494,7 +494,7 @@ TEST_F(FetcherTest, NoExtractNotExecutable)
   uri->set_executable(false);
   uri->set_extract(false);
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.launcher_dir = path::join(tests::flags.build_dir, "src");
 
   Option<int> stdout = None();
@@ -544,7 +544,7 @@ TEST_F(FetcherTest, NoExtractExecutable)
   uri->set_executable(true);
   uri->set_extract(false);
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.launcher_dir = path::join(tests::flags.build_dir, "src");
 
   Option<int> stdout = None();
@@ -602,7 +602,7 @@ TEST_F(FetcherTest, ExtractNotExecutable)
   uri->set_executable(false);
   uri->set_extract(true);
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.launcher_dir = path::join(tests::flags.build_dir, "src");
 
   Option<int> stdout = None();

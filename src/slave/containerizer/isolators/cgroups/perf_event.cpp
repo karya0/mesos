@@ -61,6 +61,8 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::state::RunState;
+
 Try<Isolator*> CgroupsPerfEventIsolatorProcess::create(const Flags& flags)
 {
   LOG(INFO) << "Creating PerfEvent isolator";
@@ -138,11 +140,11 @@ void CgroupsPerfEventIsolatorProcess::initialize()
 
 
 Future<Nothing> CgroupsPerfEventIsolatorProcess::recover(
-    const list<state::RunState>& states)
+    const list<RunState>& states)
 {
   hashset<string> cgroups;
 
-  foreach (const state::RunState& state, states) {
+  foreach (const RunState& state, states) {
     if (state.id.isNone()) {
       foreachvalue (Info* info, infos) {
         delete info;

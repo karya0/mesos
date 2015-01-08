@@ -131,7 +131,7 @@ master::Flags MesosTest::CreateMasterFlags()
 
 slave::Flags MesosTest::CreateSlaveFlags()
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
 
   // Create a temporary work directory (removed by Environment).
   Try<string> directory = environment->mkdtemp();
@@ -414,7 +414,7 @@ void MockSlave::unmocked_removeFramework(slave::Framework* framework)
 
 slave::Flags ContainerizerTest<slave::MesosContainerizer>::CreateSlaveFlags()
 {
-  slave::Flags flags = MesosTest::CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = MesosTest::CreateSlaveFlags();
 
   // If the user has specified isolation on command-line, we better
   // use it.

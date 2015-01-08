@@ -37,6 +37,8 @@
 
 #include "slave/containerizer/fetcher.hpp"
 
+#include "slave/state.hpp"
+
 namespace mesos {
 namespace internal {
 namespace slave {
@@ -44,11 +46,6 @@ namespace slave {
 // Forward declaration.
 class Slave;
 class Flags;
-
-namespace state {
-// Forward declaration.
-struct SlaveState;
-} // namespace state {
 
 // An abstraction of a Containerizer that will contain an executor and its
 // tasks.
@@ -74,7 +71,7 @@ public:
   // executors present on the system but not included in state (or state is
   // None) will be terminated and cleaned up.
   virtual process::Future<Nothing> recover(
-      const Option<state::SlaveState>& state) = 0;
+      const Option<mesos::slave::state::SlaveState>& state) = 0;
 
   // Launch a containerized executor. Returns true if launching this
   // ExecutorInfo is supported and it has been launched, otherwise

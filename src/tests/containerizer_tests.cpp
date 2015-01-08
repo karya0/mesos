@@ -76,7 +76,7 @@ public:
       isolators.push_back(Owned<Isolator>(isolator.get()));
     }
 
-    slave::Flags flags;
+    mesos::internal::slave::Flags flags;
     flags.launcher_dir = path::join(tests::flags.build_dir, "src");
 
     Try<Launcher*> launcher = PosixLauncher::create(flags);
@@ -261,7 +261,7 @@ TEST_F(MesosContainerizerExecuteTest, IoRedirection)
 {
   string directory = os::getcwd(); // We're inside a temporary sandbox.
 
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   flags.launcher_dir = path::join(tests::flags.build_dir, "src");
 
   Fetcher fetcher;
@@ -354,7 +354,7 @@ public:
 // complete without waiting for the fetching to finish.
 TEST_F(MesosContainerizerDestroyTest, DestroyWhileFetching)
 {
-  slave::Flags flags;
+  mesos::internal::slave::Flags flags;
   Try<Launcher*> launcher = PosixLauncher::create(flags);
   ASSERT_SOME(launcher);
   std::vector<process::Owned<Isolator>> isolators;

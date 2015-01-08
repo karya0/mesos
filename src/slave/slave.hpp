@@ -301,7 +301,8 @@ public:
   void checkDiskUsage();
 
   // Recovers the slave, status update manager and isolator.
-  process::Future<Nothing> recover(const Result<state::State>& state);
+  process::Future<Nothing> recover(
+      const Result<mesos::slave::state::State>& state);
 
   // This is called after 'recover()'. If 'flags.reconnect' is
   // 'reconnect', the slave attempts to reconnect to any old live
@@ -312,13 +313,13 @@ public:
   // recover() and before __recover().
   // TODO(idownes): Remove this when we support defers to objects.
   process::Future<Nothing> _recoverContainerizer(
-      const Option<state::SlaveState>& state);
+      const Option<mesos::slave::state::SlaveState>& state);
 
   // This is called when recovery finishes.
   void __recover(const process::Future<Nothing>& future);
 
   // Helper to recover a framework from the specified state.
-  void recoverFramework(const state::FrameworkState& state);
+  void recoverFramework(const mesos::slave::state::FrameworkState& state);
 
   // Removes and garbage collects the executor.
   void removeExecutor(Framework* framework, Executor* executor);
@@ -491,7 +492,7 @@ struct Executor
   void completeTask(const TaskID& taskId);
   void checkpointExecutor();
   void checkpointTask(const TaskInfo& task);
-  void recoverTask(const state::TaskState& state);
+  void recoverTask(const mesos::slave::state::TaskState& state);
   void updateTaskState(const TaskStatus& status);
 
   // Returns true if there are any queued/launched/terminated tasks.
@@ -570,7 +571,7 @@ struct Framework
   void destroyExecutor(const ExecutorID& executorId);
   Executor* getExecutor(const ExecutorID& executorId);
   Executor* getExecutor(const TaskID& taskId);
-  void recoverExecutor(const state::ExecutorState& state);
+  void recoverExecutor(const mesos::slave::state::ExecutorState& state);
 
   enum State {
     RUNNING,      // First state of a newly created framework.

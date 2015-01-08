@@ -78,6 +78,8 @@ using namespace routing;
 using namespace routing::filter;
 using namespace routing::queueing;
 
+using filter::ip::PortRange;
+
 using std::cerr;
 using std::cout;
 using std::dec;
@@ -90,11 +92,11 @@ using std::sort;
 using std::string;
 using std::vector;
 
-using filter::ip::PortRange;
-
 namespace mesos {
 namespace internal {
 namespace slave {
+
+using mesos::slave::state::RunState;
 
 const std::string VETH_PREFIX = "mesos";
 
@@ -1227,7 +1229,7 @@ Try<Isolator*> PortMappingIsolatorProcess::create(const Flags& flags)
 
 
 Future<Nothing> PortMappingIsolatorProcess::recover(
-    const list<state::RunState>& states)
+    const list<RunState>& states)
 {
   // Extract pids from virtual device names.
   Try<set<string> > links = net::links();
@@ -1250,7 +1252,7 @@ Future<Nothing> PortMappingIsolatorProcess::recover(
     pids.insert(pid.get());
   }
 
-  foreach (const state::RunState& state, states) {
+  foreach (const RunState& state, states) {
     if (!state.id.isSome()) {
       foreachvalue (Info* info, infos) {
         delete info;

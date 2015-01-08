@@ -384,7 +384,7 @@ TEST_F(ReconciliationTest, SlaveInTransition)
   ASSERT_SOME(master);
 
   // Start a checkpointing slave.
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.checkpoint = true;
 
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =

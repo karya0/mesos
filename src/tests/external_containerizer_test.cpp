@@ -49,7 +49,9 @@ using namespace mesos::internal::tests;
 using namespace process;
 
 using mesos::internal::master::Master;
+
 using mesos::internal::slave::Containerizer;
+using mesos::internal::slave::ExternalContainerizer;
 using mesos::internal::slave::Slave;
 
 using std::string;
@@ -72,7 +74,7 @@ using testing::Invoke;
 class ExternalContainerizerTest : public MesosTest {};
 
 
-class MockExternalContainerizer : public slave::ExternalContainerizer
+class MockExternalContainerizer : public ExternalContainerizer
 {
 public:
   MOCK_METHOD8(
@@ -84,10 +86,10 @@ public:
           const std::string&,
           const Option<std::string>&,
           const SlaveID&,
-          const process::PID<slave::Slave>&,
+          const process::PID<Slave>&,
           bool checkpoint));
 
-  MockExternalContainerizer(const slave::Flags& flags)
+  MockExternalContainerizer(const mesos::internal::slave::Flags& flags)
     : ExternalContainerizer(flags)
   {
     // Set up defaults for mocked methods.
@@ -108,7 +110,7 @@ public:
       const PID<Slave>& slavePid,
       bool checkpoint)
   {
-    return slave::ExternalContainerizer::launch(
+    return ExternalContainerizer::launch(
         containerId,
         taskInfo,
         executorInfo,
@@ -129,7 +131,7 @@ TEST_F(ExternalContainerizerTest, DISABLED_Launch)
 
   Flags testFlags;
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   flags.isolation = "external";
   flags.containerizer_path =

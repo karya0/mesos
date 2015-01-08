@@ -193,7 +193,7 @@ TEST_F(HookTest, DISABLED_VerifySlaveLaunchExecutorHook)
   Try<PID<Master> > master = StartMaster(masterFlags);
   ASSERT_SOME(master);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 

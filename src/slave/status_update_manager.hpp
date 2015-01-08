@@ -48,18 +48,11 @@
 #include "messages/messages.hpp"
 
 #include "slave/flags.hpp"
+#include "slave/state.hpp"
 
 namespace mesos {
 namespace internal {
 namespace slave {
-
-// Forward declarations.
-
-namespace state {
-
-struct SlaveState;
-
-}
 
 class StatusUpdateManagerProcess;
 struct StatusUpdateStream;
@@ -116,7 +109,7 @@ public:
   // Recover status updates.
   process::Future<Nothing> recover(
       const std::string& rootDir,
-      const Option<state::SlaveState>& state);
+      const Option<mesos::slave::state::SlaveState>& state);
 
 
   // Pause sending updates.

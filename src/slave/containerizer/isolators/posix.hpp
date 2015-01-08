@@ -42,9 +42,9 @@ class PosixIsolatorProcess : public IsolatorProcess
 {
 public:
   virtual process::Future<Nothing> recover(
-      const std::list<state::RunState>& state)
+      const std::list<mesos::slave::state::RunState>& state)
   {
-    foreach (const state::RunState& run, state) {
+    foreach (const mesos::slave::state::RunState& run, state) {
       if (!run.id.isSome()) {
         return process::Failure("ContainerID is required to recover");
       }

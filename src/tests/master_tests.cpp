@@ -65,10 +65,11 @@ using mesos::internal::master::Master;
 using mesos::internal::master::allocator::AllocatorProcess;
 using mesos::internal::master::allocator::HierarchicalDRFAllocatorProcess;
 
-using mesos::internal::slave::GarbageCollectorProcess;
-using mesos::internal::slave::Slave;
 using mesos::internal::slave::Containerizer;
+using mesos::internal::slave::GarbageCollectorProcess;
 using mesos::internal::slave::MesosContainerizerProcess;
+using mesos::internal::slave::STATUS_UPDATE_RETRY_INTERVAL_MIN;
+using mesos::internal::slave::Slave;
 
 using process::Clock;
 using process::Future;
@@ -177,7 +178,7 @@ TEST_F(MasterTest, ShutdownFrameworkWhileTaskRunning)
 
   TestContainerizer containerizer(&exec);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.executor_shutdown_grace_period = Seconds(0);
 
   Try<PID<Slave>> slave = StartSlave(&containerizer, flags);
@@ -450,7 +451,7 @@ TEST_F(MasterTest, KillUnknownTaskSlaveInTransition)
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
   // Start a checkpointing slave.
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, slaveFlags);
@@ -642,7 +643,7 @@ TEST_F(MasterTest, RecoverResources)
 
   TestContainerizer containerizer(&exec);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.resources = Option<string>(
       "cpus:2;mem:1024;disk:1024;ports:[1-10, 20-30]");
 
@@ -1066,7 +1067,7 @@ TEST_F(WhitelistTest, WhitelistSlave)
   Try<PID<Master> > master = StartMaster(flags);
   ASSERT_SOME(master);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.hostname = hostname.get();
   Try<PID<Slave> > slave = StartSlave(slaveFlags);
   ASSERT_SOME(slave);
@@ -1154,7 +1155,7 @@ TEST_F(MasterTest, LaunchCombinedOfferTest)
   Resources halfSlave = Resources::parse("cpus:1;mem:512").get();
   Resources fullSlave = halfSlave + halfSlave;
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.resources = Option<string>(stringify(fullSlave));
 
   Try<PID<Slave> > slave = StartSlave(&containerizer, flags);
@@ -1293,7 +1294,7 @@ TEST_F(MasterTest, LaunchAcrossSlavesTest)
   Resources fullSlave = Resources::parse("cpus:2;mem:1024").get();
   Resources twoSlaves = fullSlave + fullSlave;
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   flags.resources = Option<string>(stringify(fullSlave));
 
@@ -1385,7 +1386,7 @@ TEST_F(MasterTest, LaunchDuplicateOfferTest)
   // See LaunchCombinedOfferTest() for resource size motivation.
   Resources fullSlave = Resources::parse("cpus:2;mem:1024").get();
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.resources = Option<string>(stringify(fullSlave));
 
   Try<PID<Slave> > slave = StartSlave(&containerizer, flags);
@@ -1583,7 +1584,7 @@ TEST_F(MasterTest, RecoveredSlaveDoesNotReregister)
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), master.get(), _);
 
-  slave::Flags slaveFlags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = this->CreateSlaveFlags();
 
   // Setup recovery slave flags.
   slaveFlags.checkpoint = true;
@@ -1663,7 +1664,7 @@ TEST_F(MasterTest, NonStrictRegistryWriteOnly)
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), master.get(), _);
 
-  slave::Flags slaveFlags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = this->CreateSlaveFlags();
 
   // Setup recovery slave flags.
   slaveFlags.checkpoint = true;
@@ -1745,7 +1746,7 @@ TEST_F(MasterTest, RecoveredSlaveReregisters)
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), master.get(), _);
 
-  slave::Flags slaveFlags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = this->CreateSlaveFlags();
 
   // Setup recovery slave flags.
   slaveFlags.checkpoint = true;
@@ -2076,7 +2077,7 @@ TEST_F(MasterTest, IgnoreEphemeralPortsResource)
   string resourcesWithEphemeralPorts =
     resourcesWithoutEphemeralPorts + ";ephemeral_ports:[30001-30999]";
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.resources = resourcesWithEphemeralPorts;
 
   Try<PID<Slave> > slave = StartSlave(flags);
@@ -2339,7 +2340,7 @@ TEST_F(MasterTest, UnacknowledgedTerminalTask)
 
   TestContainerizer containerizer(&exec);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.resources = "cpus:1;mem:64";
   Try<PID<Slave> > slave = StartSlave(&containerizer, slaveFlags);
   ASSERT_SOME(slave);
@@ -2418,7 +2419,7 @@ TEST_F(MasterTest, ReleaseResourcesForTerminalTaskWithPendingUpdates)
 
   TestContainerizer containerizer(&exec);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.resources = "cpus:1;mem:64";
   Try<PID<Slave> > slave = StartSlave(&containerizer, slaveFlags);
   ASSERT_SOME(slave);
@@ -2473,7 +2474,7 @@ TEST_F(MasterTest, ReleaseResourcesForTerminalTaskWithPendingUpdates)
   // Advance the clock so that the status update manager resends
   // TASK_RUNNING update with 'latest_state' as TASK_FINISHED.
   Clock::pause();
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
   Clock::resume();
 
   // Ensure the resources are recovered.
@@ -2695,7 +2696,7 @@ TEST_F(MasterTest, SlaveActiveEndpoint)
     FUTURE_MESSAGE(Eq(SlaveRegisteredMessage().GetTypeName()), _, _);
 
   // Start a checkpointing slave.
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
   Try<PID<Slave>> slave = StartSlave(flags);
   ASSERT_SOME(slave);

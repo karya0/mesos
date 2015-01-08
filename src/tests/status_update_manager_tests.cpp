@@ -49,11 +49,18 @@
 
 using namespace mesos;
 using namespace mesos::internal;
+using namespace mesos::internal::slave;
 using namespace mesos::internal::tests;
 
 using mesos::internal::master::Master;
 
-using mesos::internal::slave::Slave;
+using mesos::internal::slave::paths::getMetaRootDir;
+
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::State;
+using mesos::slave::state::TaskState;
 
 using process::Clock;
 using process::Future;
@@ -96,7 +103,7 @@ TEST_F(StatusUpdateManagerTest, CheckpointStatusUpdate)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -147,28 +154,27 @@ TEST_F(StatusUpdateManagerTest, CheckpointStatusUpdate)
 
   // Ensure that both the status update and its acknowledgement are
   // correctly checkpointed.
-  Result<slave::state::State> state =
-    slave::state::recover(slave::paths::getMetaRootDir(flags.work_dir), true);
+  Result<State> state = mesos::slave::state::recover(
+      getMetaRootDir(flags.work_dir), true);
 
   ASSERT_SOME(state);
   ASSERT_SOME(state.get().slave);
   ASSERT_TRUE(state.get().slave.get().frameworks.contains(frameworkId.get()));
 
-  slave::state::FrameworkState frameworkState =
+  FrameworkState frameworkState =
     state.get().slave.get().frameworks.get(frameworkId.get()).get();
 
   ASSERT_EQ(1u, frameworkState.executors.size());
 
-  slave::state::ExecutorState executorState =
-    frameworkState.executors.begin()->second;
+  ExecutorState executorState = frameworkState.executors.begin()->second;
 
   ASSERT_EQ(1u, executorState.runs.size());
 
-  slave::state::RunState runState = executorState.runs.begin()->second;
+  RunState runState = executorState.runs.begin()->second;
 
   ASSERT_EQ(1u, runState.tasks.size());
 
-  slave::state::TaskState taskState = runState.tasks.begin()->second;
+  mesos::slave::state::TaskState taskState = runState.tasks.begin()->second;
 
   EXPECT_EQ(1u, taskState.updates.size());
   EXPECT_EQ(1u, taskState.acks.size());
@@ -190,7 +196,7 @@ TEST_F(StatusUpdateManagerTest, RetryStatusUpdate)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -236,7 +242,7 @@ TEST_F(StatusUpdateManagerTest, RetryStatusUpdate)
   EXPECT_CALL(sched, statusUpdate(_, _))
     .WillOnce(FutureArg<1>(&status));
 
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
 
   AWAIT_READY(status);
 
@@ -265,7 +271,7 @@ TEST_F(StatusUpdateManagerTest, IgnoreDuplicateStatusUpdateAck)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -320,7 +326,7 @@ TEST_F(StatusUpdateManagerTest, IgnoreDuplicateStatusUpdateAck)
   Future<Nothing> ack =
     FUTURE_DISPATCH(_, &Slave::_statusUpdateAcknowledgement);
 
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
 
   AWAIT_READY(status);
 
@@ -381,7 +387,7 @@ TEST_F(StatusUpdateManagerTest, IgnoreUnexpectedStatusUpdateAck)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -473,7 +479,7 @@ TEST_F(StatusUpdateManagerTest, DuplicateTerminalUpdateBeforeAck)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -554,7 +560,7 @@ TEST_F(StatusUpdateManagerTest, DuplicateTerminalUpdateBeforeAck)
   EXPECT_CALL(sched, statusUpdate(_, _))
     .WillOnce(FutureArg<1>(&update));
 
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
   Clock::settle();
 
   // Ensure the scheduler receives TASK_FINISHED.
@@ -585,7 +591,7 @@ TEST_F(StatusUpdateManagerTest, DuplicateTerminalUpdateAfterAck)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -684,7 +690,7 @@ TEST_F(StatusUpdateManagerTest, DuplicateUpdateBeforeAck)
 
   MockExecutor exec(DEFAULT_EXECUTOR_ID);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.checkpoint = true;
 
   Try<PID<Slave> > slave = StartSlave(&exec, flags);
@@ -760,7 +766,7 @@ TEST_F(StatusUpdateManagerTest, DuplicateUpdateBeforeAck)
   EXPECT_CALL(sched, statusUpdate(_, _))
     .WillOnce(FutureArg<1>(&update));
 
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
   Clock::settle();
 
   // Ensure the scheduler receives TASK_FINISHED.
@@ -841,7 +847,7 @@ TEST_F(StatusUpdateManagerTest, LatestTaskState)
     DROP_PROTOBUF(StatusUpdateMessage(), _, master.get());
 
   // Advance the clock for the status update manager to send a retry.
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
 
   AWAIT_READY(statusUpdateMessage2);
 

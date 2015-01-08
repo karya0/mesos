@@ -42,6 +42,7 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
+using mesos::slave::state::SlaveState;
 
 class ComposingContainerizerProcess
   : public Process<ComposingContainerizerProcess>
@@ -54,7 +55,7 @@ public:
   virtual ~ComposingContainerizerProcess();
 
   Future<Nothing> recover(
-      const Option<state::SlaveState>& state);
+      const Option<SlaveState>& state);
 
   Future<bool> launch(
       const ContainerID& containerId,
@@ -153,7 +154,7 @@ ComposingContainerizer::~ComposingContainerizer()
 
 
 Future<Nothing> ComposingContainerizer::recover(
-    const Option<state::SlaveState>& state)
+    const Option<SlaveState>& state)
 {
   return dispatch(process, &ComposingContainerizerProcess::recover, state);
 }
@@ -256,7 +257,7 @@ ComposingContainerizerProcess::~ComposingContainerizerProcess()
 
 
 Future<Nothing> ComposingContainerizerProcess::recover(
-    const Option<state::SlaveState>& state)
+    const Option<SlaveState>& state)
 {
   // Recover each containerizer in parallel.
   list<Future<Nothing> > futures;

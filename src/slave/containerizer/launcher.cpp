@@ -38,8 +38,7 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-using state::RunState;
-
+using mesos::slave::state::RunState;
 
 Try<Launcher*> PosixLauncher::create(const Flags& flags)
 {

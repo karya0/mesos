@@ -97,7 +97,7 @@ TEST_F(CredentialsTest, authenticatedSlaveText)
   Future<SlaveRegisteredMessage> slaveRegisteredMessage =
     FUTURE_PROTOBUF(SlaveRegisteredMessage(), _, _);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
 
   slaveFlags.credential = "file://" + path;
 

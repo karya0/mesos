@@ -42,6 +42,9 @@ using namespace mesos;
 using namespace mesos::internal;
 using namespace mesos::internal::tests;
 
+using mesos::internal::slave::RESOURCE_MONITORING_INTERVAL;
+using mesos::internal::slave::ResourceMonitor;
+
 using process::Clock;
 using process::Future;
 
@@ -92,12 +95,12 @@ TEST(MonitorTest, Collection)
   ResourceStatistics statistics2;
   statistics2.CopyFrom(statistics1);
   statistics2.set_timestamp(
-      statistics2.timestamp() + slave::RESOURCE_MONITORING_INTERVAL.secs());
+      statistics2.timestamp() + RESOURCE_MONITORING_INTERVAL.secs());
 
   ResourceStatistics statistics3;
   statistics3.CopyFrom(statistics2);
   statistics3.set_timestamp(
-      statistics3.timestamp() + slave::RESOURCE_MONITORING_INTERVAL.secs());
+      statistics3.timestamp() + RESOURCE_MONITORING_INTERVAL.secs());
 
   TestContainerizer containerizer;
 
@@ -110,7 +113,7 @@ TEST(MonitorTest, Collection)
     .WillOnce(DoAll(FutureSatisfy(&usage3),
                     Return(statistics3)));
 
-  slave::ResourceMonitor monitor(&containerizer);
+  ResourceMonitor monitor(&containerizer);
 
   // We pause the clock first in order to make sure that we can
   // advance time below to force the 'delay' in
@@ -120,13 +123,13 @@ TEST(MonitorTest, Collection)
   monitor.start(
       containerId,
       executorInfo,
-      slave::RESOURCE_MONITORING_INTERVAL);
+      RESOURCE_MONITORING_INTERVAL);
 
   // Now wait for ResouorceMonitorProcess::start to finish so we can
   // advance time to cause collection to begin.
   process::Clock::settle();
 
-  process::Clock::advance(slave::RESOURCE_MONITORING_INTERVAL);
+  process::Clock::advance(RESOURCE_MONITORING_INTERVAL);
   process::Clock::settle();
 
   AWAIT_READY(usage1);
@@ -135,7 +138,7 @@ TEST(MonitorTest, Collection)
   process::Clock::settle();
 
   // Expect a second collection to occur after the interval.
-  process::Clock::advance(slave::RESOURCE_MONITORING_INTERVAL);
+  process::Clock::advance(RESOURCE_MONITORING_INTERVAL);
   process::Clock::settle();
 
   AWAIT_READY(usage2);
@@ -144,7 +147,7 @@ TEST(MonitorTest, Collection)
   process::Clock::settle();
 
   // Expect a third collection to occur after the interval.
-  process::Clock::advance(slave::RESOURCE_MONITORING_INTERVAL);
+  process::Clock::advance(RESOURCE_MONITORING_INTERVAL);
   process::Clock::settle();
 
   AWAIT_READY(usage3);
@@ -162,7 +165,7 @@ TEST(MonitorTest, Collection)
   EXPECT_CALL(containerizer, usage(containerId))
     .Times(0);
 
-  process::Clock::advance(slave::RESOURCE_MONITORING_INTERVAL);
+  process::Clock::advance(RESOURCE_MONITORING_INTERVAL);
   process::Clock::settle();
 }
 
@@ -205,7 +208,7 @@ TEST(MonitorTest, Statistics)
     .WillOnce(DoAll(FutureSatisfy(&usage),
                     Return(statistics)));
 
-  slave::ResourceMonitor monitor(&containerizer);
+  ResourceMonitor monitor(&containerizer);
 
   // We pause the clock first to ensure unexpected collections
   // are avoided.
@@ -214,7 +217,7 @@ TEST(MonitorTest, Statistics)
   monitor.start(
       containerId,
       executorInfo,
-      slave::RESOURCE_MONITORING_INTERVAL);
+      RESOURCE_MONITORING_INTERVAL);
 
   // Now wait for ResouorceMonitorProcess::watch to finish.
   process::Clock::settle();
@@ -287,7 +290,7 @@ TEST(MonitorTest, Statistics)
   response = process::http::get(upid, "statistics.json");
 
   // Ensure the rate limiter acquires its permit.
-  process::Clock::advance(slave::RESOURCE_MONITORING_INTERVAL);
+  process::Clock::advance(RESOURCE_MONITORING_INTERVAL);
   process::Clock::settle();
 
   AWAIT_EXPECT_RESPONSE_STATUS_EQ(OK().status, response);

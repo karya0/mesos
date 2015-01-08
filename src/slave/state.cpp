@@ -20,14 +20,17 @@
 #include "slave/paths.hpp"
 #include "slave/state.hpp"
 
-namespace mesos {
-namespace internal {
-namespace slave {
-namespace state {
-
 using std::list;
 using std::string;
 using std::max;
+
+namespace mesos {
+namespace slave {
+namespace state {
+
+using namespace mesos::internal::slave::paths;
+
+using mesos::internal::StatusUpdateRecord;
 
 
 Result<State> recover(const string& rootDir, bool strict)
@@ -54,8 +57,8 @@ Result<State> recover(const string& rootDir, bool strict)
 
   // Did the machine reboot? No need to recover slave state if the
   // machine has rebooted.
-  if (os::exists(paths::getBootIdPath(rootDir))) {
-    Try<string> read = os::read(paths::getBootIdPath(rootDir));
+  if (os::exists(getBootIdPath(rootDir))) {
+    Try<string> read = os::read(getBootIdPath(rootDir));
     if (read.isSome()) {
       Try<string> id = os::bootId();
       CHECK_SOME(id);
@@ -67,7 +70,7 @@ Result<State> recover(const string& rootDir, bool strict)
     }
   }
 
-  const std::string& latest = paths::getLatestSlavePath(rootDir);
+  const std::string& latest = getLatestSlavePath(rootDir);
 
   // Check if the "latest" symlink to a slave directory exists.
   if (!os::exists(latest)) {
@@ -109,7 +112,7 @@ Try<SlaveState> SlaveState::recover(
   state.id = slaveId;
 
   // Read the slave info.
-  const string& path = paths::getSlaveInfoPath(rootDir, slaveId);
+  const string& path = getSlaveInfoPath(rootDir, slaveId);
   if (!os::exists(path)) {
     // This could happen if the slave died before it registered with
     // the master.
@@ -141,7 +144,7 @@ Try<SlaveState> SlaveState::recover(
   state.info = slaveInfo.get();
 
   // Find the frameworks.
-  Try<list<string> > frameworks = paths::getFrameworkPaths(rootDir, slaveId);
+  Try<list<string> > frameworks = getFrameworkPaths(rootDir, slaveId);
 
   if (frameworks.isError()) {
     return Error("Failed to find frameworks for slave " + slaveId.value() +
@@ -180,7 +183,7 @@ Try<FrameworkState> FrameworkState::recover(
   string message;
 
   // Read the framework info.
-  string path = paths::getFrameworkInfoPath(rootDir, slaveId, frameworkId);
+  string path = getFrameworkInfoPath(rootDir, slaveId, frameworkId);
   if (!os::exists(path)) {
     // This could happen if the slave died after creating the
     // framework directory but before it checkpointed the framework
@@ -215,7 +218,7 @@ Try<FrameworkState> FrameworkState::recover(
   state.info = frameworkInfo.get();
 
   // Read the framework pid.
-  path = paths::getFrameworkPidPath(rootDir, slaveId, frameworkId);
+  path = getFrameworkPidPath(rootDir, slaveId, frameworkId);
   if (!os::exists(path)) {
     // This could happen if the slave died after creating the
     // framework info but before it checkpointed the framework pid.
@@ -249,7 +252,7 @@ Try<FrameworkState> FrameworkState::recover(
 
   // Find the executors.
   Try<list<string> > executors =
-    paths::getExecutorPaths(rootDir, slaveId, frameworkId);
+    getExecutorPaths(rootDir, slaveId, frameworkId);
 
   if (executors.isError()) {
     return Error(
@@ -290,7 +293,7 @@ Try<ExecutorState> ExecutorState::recover(
   string message;
 
   // Find the runs.
-  Try<list<string> > runs = paths::getExecutorRunPaths(
+  Try<list<string> > runs = getExecutorRunPaths(
       rootDir,
       slaveId,
       frameworkId,
@@ -303,7 +306,7 @@ Try<ExecutorState> ExecutorState::recover(
 
   // Recover the runs.
   foreach (const string& path, runs.get()) {
-    if (os::basename(path).get() == paths::LATEST_SYMLINK) {
+    if (os::basename(path).get() == LATEST_SYMLINK) {
       const Result<string>& latest = os::realpath(path);
       if (!latest.isSome()) {
         return Error(
@@ -347,8 +350,8 @@ Try<ExecutorState> ExecutorState::recover(
   }
 
   // Read the executor info.
-  const string& path =
-    paths::getExecutorInfoPath(rootDir, slaveId, frameworkId, executorId);
+  const string& path = getExecutorInfoPath(
+      rootDir, slaveId, frameworkId, executorId);
   if (!os::exists(path)) {
     // This could happen if the slave died after creating the executor
     // directory but before it checkpointed the executor info.
@@ -397,7 +400,7 @@ Try<RunState> RunState::recover(
   state.id = containerId;
   string message;
 
-  state.directory = paths::getExecutorRunPath(
+  state.directory = getExecutorRunPath(
       rootDir,
       slaveId,
       frameworkId,
@@ -408,13 +411,13 @@ Try<RunState> RunState::recover(
   // known even if partial state is returned, e.g., if the libprocess
   // pid file is not recovered. It indicates the slave removed the
   // executor.
-  string path = paths::getExecutorSentinelPath(
+  string path = getExecutorSentinelPath(
       rootDir, slaveId, frameworkId, executorId, containerId);
 
   state.completed = os::exists(path);
 
   // Find the tasks.
-  Try<list<string> > tasks = paths::getTaskPaths(
+  Try<list<string> > tasks = getTaskPaths(
       rootDir,
       slaveId,
       frameworkId,
@@ -445,7 +448,7 @@ Try<RunState> RunState::recover(
   }
 
   // Read the forked pid.
-  path = paths::getForkedPidPath(
+  path = getForkedPidPath(
       rootDir, slaveId, frameworkId, executorId, containerId);
   if (!os::exists(path)) {
     // This could happen if the slave died before the isolator
@@ -485,7 +488,7 @@ Try<RunState> RunState::recover(
   state.forkedPid = forkedPid.get();
 
   // Read the libprocess pid.
-  path = paths::getLibprocessPidPath(
+  path = getLibprocessPidPath(
       rootDir, slaveId, frameworkId, executorId, containerId);
 
   if (!os::exists(path)) {
@@ -538,7 +541,7 @@ Try<TaskState> TaskState::recover(
   string message;
 
   // Read the task info.
-  string path = paths::getTaskInfoPath(
+  string path = getTaskInfoPath(
       rootDir, slaveId, frameworkId, executorId, containerId, taskId);
   if (!os::exists(path)) {
     // This could happen if the slave died after creating the task
@@ -571,7 +574,7 @@ Try<TaskState> TaskState::recover(
   state.info = task.get();
 
   // Read the status updates.
-  path = paths::getTaskUpdatesPath(
+  path = getTaskUpdatesPath(
       rootDir, slaveId, frameworkId, executorId, containerId, taskId);
   if (!os::exists(path)) {
     // This could happen if the slave died before it checkpointed any
@@ -665,7 +668,7 @@ Try<ResourcesState> ResourcesState::recover(
 {
   ResourcesState state;
 
-  const string& path = paths::getResourcesInfoPath(rootDir);
+  const string& path = getResourcesInfoPath(rootDir);
   if (!os::exists(path)) {
     LOG(INFO) << "Failed to find resources file '" << path << "'";
     return state;
@@ -783,5 +786,4 @@ Try<Nothing> checkpoint(const std::string& path, const std::string& message)
 
 } // namespace state {
 } // namespace slave {
-} // namespace internal {
 } // namespace mesos {

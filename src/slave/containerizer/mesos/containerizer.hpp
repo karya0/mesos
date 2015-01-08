@@ -57,7 +57,7 @@ public:
   virtual ~MesosContainerizer();
 
   virtual process::Future<Nothing> recover(
-      const Option<state::SlaveState>& state);
+      const Option<mesos::slave::state::SlaveState>& state);
 
   virtual process::Future<bool> launch(
       const ContainerID& containerId,
@@ -116,7 +116,7 @@ public:
   virtual ~MesosContainerizerProcess() {}
 
   virtual process::Future<Nothing> recover(
-      const Option<state::SlaveState>& state);
+      const Option<mesos::slave::state::SlaveState>& state);
 
   virtual process::Future<bool> launch(
       const ContainerID& containerId,
@@ -157,10 +157,10 @@ public:
 
 private:
   process::Future<Nothing> _recover(
-      const std::list<state::RunState>& recoverable);
+      const std::list<mesos::slave::state::RunState>& recoverable);
 
   process::Future<Nothing> __recover(
-      const std::list<state::RunState>& recovered);
+      const std::list<mesos::slave::state::RunState>& recovered);
 
   process::Future<std::list<Option<CommandInfo>>> prepare(
       const ContainerID& containerId,

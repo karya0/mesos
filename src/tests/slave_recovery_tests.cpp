@@ -67,9 +67,17 @@ using namespace process;
 
 using mesos::internal::master::Master;
 
+using mesos::internal::slave::paths::getMetaRootDir;
+
 using mesos::internal::slave::Containerizer;
 using mesos::internal::slave::Fetcher;
 using mesos::internal::slave::GarbageCollectorProcess;
+
+using mesos::slave::state::ExecutorState;
+using mesos::slave::state::FrameworkState;
+using mesos::slave::state::RunState;
+using mesos::slave::state::SlaveState;
+using mesos::slave::state::State;
 
 using std::map;
 using std::string;
@@ -93,7 +101,7 @@ TEST_F(SlaveStateTest, CheckpointProtobuf)
   expected.set_value("slave1");
 
   const string& file = "slave.id";
-  slave::state::checkpoint(file, expected);
+  mesos::slave::state::checkpoint(file, expected);
 
   const Result<SlaveID>& actual = ::protobuf::read<SlaveID>(file);
   ASSERT_SOME(actual);
@@ -107,7 +115,7 @@ TEST_F(SlaveStateTest, CheckpointString)
   // Checkpoint a test string.
   const string expected = "test";
   const string file = "test-file";
-  slave::state::checkpoint(file, expected);
+  mesos::slave::state::checkpoint(file, expected);
 
   ASSERT_SOME_EQ(expected, os::read(file));
 }
@@ -116,9 +124,10 @@ template <typename T>
 class SlaveRecoveryTest : public ContainerizerTest<T>
 {
 public:
-  virtual slave::Flags CreateSlaveFlags()
+  virtual mesos::internal::slave::Flags CreateSlaveFlags()
   {
-    slave::Flags flags = ContainerizerTest<T>::CreateSlaveFlags();
+    mesos::internal::slave::Flags flags =
+      ContainerizerTest<T>::CreateSlaveFlags();
 
     // Setup recovery slave flags.
     flags.checkpoint = true;
@@ -131,7 +140,7 @@ public:
 
 
 // Containerizer types to run the tests.
-typedef ::testing::Types<slave::MesosContainerizer> ContainerizerTypes;
+typedef ::testing::Types<MesosContainerizer> ContainerizerTypes;
 
 
 TYPED_TEST_CASE(SlaveRecoveryTest, ContainerizerTypes);
@@ -142,7 +151,7 @@ TYPED_TEST(SlaveRecoveryTest, RecoverSlaveState)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -223,13 +232,13 @@ TYPED_TEST(SlaveRecoveryTest, RecoverSlaveState)
   AWAIT_READY(_ack);
 
   // Recover the state.
-  Result<slave::state::State> recover = slave::state::recover(
+  Result<State> recover = mesos::slave::state::recover(
       paths::getMetaRootDir(flags.work_dir), true);
 
   ASSERT_SOME(recover);
   ASSERT_SOME(recover.get().slave);
 
-  slave::state::SlaveState state = recover.get().slave.get();
+  SlaveState state = recover.get().slave.get();
 
   // Check slave id.
   ASSERT_EQ(slaveId, state.id);
@@ -324,7 +333,7 @@ TYPED_TEST(SlaveRecoveryTest, RecoverStatusUpdateManager)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -411,7 +420,7 @@ TYPED_TEST(SlaveRecoveryTest, ReconnectExecutor)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -507,7 +516,7 @@ TYPED_TEST(SlaveRecoveryTest, RecoverUnregisteredExecutor)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -620,7 +629,7 @@ TYPED_TEST(SlaveRecoveryTest, RecoverTerminatedExecutor)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -747,7 +756,7 @@ TYPED_TEST(SlaveRecoveryTest, DISABLED_RecoveryTimeout)
 
   // Set a short recovery timeout, as we can't control the executor
   // driver time when using the process / cgroups isolators.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.recovery_timeout = Milliseconds(1);
 
   Fetcher fetcher;
@@ -843,7 +852,7 @@ TYPED_TEST(SlaveRecoveryTest, RecoverCompletedExecutor)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -935,7 +944,7 @@ TYPED_TEST(SlaveRecoveryTest, CleanupExecutor)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -1036,7 +1045,7 @@ TYPED_TEST(SlaveRecoveryTest, RemoveNonCheckpointingFramework)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -1143,7 +1152,7 @@ TYPED_TEST(SlaveRecoveryTest, NonCheckpointingFramework)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -1229,7 +1238,7 @@ TYPED_TEST(SlaveRecoveryTest, NonCheckpointingSlave)
   ASSERT_SOME(master);
 
   // Disable checkpointing for the slave.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.checkpoint = false;
 
 
@@ -1288,7 +1297,7 @@ TYPED_TEST(SlaveRecoveryTest, KillTask)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -1410,7 +1419,7 @@ TYPED_TEST(SlaveRecoveryTest, Reboot)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.strict = false;
 
   Fetcher fetcher;
@@ -1548,7 +1557,7 @@ TYPED_TEST(SlaveRecoveryTest, GCExecutor)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.strict = false;
 
   Fetcher fetcher;
@@ -1701,7 +1710,7 @@ TYPED_TEST(SlaveRecoveryTest, ShutdownSlave)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -1822,7 +1831,7 @@ TYPED_TEST(SlaveRecoveryTest, ShutdownSlaveSIGUSR1)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -1924,7 +1933,7 @@ TYPED_TEST(SlaveRecoveryTest, RegisterDisconnectedSlave)
   Future<RegisterSlaveMessage> registerSlaveMessage =
     FUTURE_PROTOBUF(RegisterSlaveMessage(), _, _);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -2036,7 +2045,7 @@ TYPED_TEST(SlaveRecoveryTest, ReconcileKillTask)
   Future<RegisterSlaveMessage> registerSlaveMessage =
       FUTURE_PROTOBUF(RegisterSlaveMessage(), _, _);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -2139,7 +2148,7 @@ TYPED_TEST(SlaveRecoveryTest, ReconcileShutdownFramework)
   Future<RegisterSlaveMessage> registerSlaveMessage =
     FUTURE_PROTOBUF(RegisterSlaveMessage(), _, _);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -2245,7 +2254,7 @@ TYPED_TEST(SlaveRecoveryTest, ReconcileTasksMissingFromSlave)
   Try<PID<Master> > master = this->StartMaster(&allocator);
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   EXPECT_CALL(allocator, addSlave(_, _, _, _));
 
@@ -2314,24 +2323,23 @@ TYPED_TEST(SlaveRecoveryTest, ReconcileTasksMissingFromSlave)
   // Kill the forked pid, so that we don't leak a child process.
   // Construct the executor id from the task id, since this test
   // uses a command executor.
-  Result<slave::state::State> state =
-    slave::state::recover(slave::paths::getMetaRootDir(flags.work_dir), true);
+  Result<State> state = mesos::slave::state::recover(
+      getMetaRootDir(flags.work_dir), true);
 
   ASSERT_SOME(state);
   ASSERT_SOME(state.get().slave);
   ASSERT_TRUE(state.get().slave.get().frameworks.contains(frameworkId.get()));
 
-  slave::state::FrameworkState frameworkState =
+  FrameworkState frameworkState =
     state.get().slave.get().frameworks.get(frameworkId.get()).get();
 
   ASSERT_EQ(1u, frameworkState.executors.size());
 
-  slave::state::ExecutorState executorState =
-    frameworkState.executors.begin()->second;
+  ExecutorState executorState = frameworkState.executors.begin()->second;
 
   ASSERT_EQ(1u, executorState.runs.size());
 
-  slave::state::RunState runState = executorState.runs.begin()->second;
+  RunState runState = executorState.runs.begin()->second;
 
   ASSERT_SOME(runState.forkedPid);
 
@@ -2418,7 +2426,7 @@ TYPED_TEST(SlaveRecoveryTest, SchedulerFailover)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -2582,7 +2590,7 @@ TYPED_TEST(SlaveRecoveryTest, PartitionedSlave)
   // Drop all the PONGs to simulate slave partition.
   DROP_MESSAGES(Eq("PONG"), _, _);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -2714,7 +2722,7 @@ TYPED_TEST(SlaveRecoveryTest, MasterFailover)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -2857,7 +2865,7 @@ TYPED_TEST(SlaveRecoveryTest, MultipleFrameworks)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -3051,7 +3059,7 @@ TYPED_TEST(SlaveRecoveryTest, MultipleSlaves)
     .WillOnce(FutureArg<1>(&offers1));
 
   // Start the first slave.
-  slave::Flags flags1 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags1 = this->CreateSlaveFlags();
 
 #ifdef __linux__
   // Disable putting slave into cgroup(s) because this is a multi-slave test.
@@ -3090,7 +3098,7 @@ TYPED_TEST(SlaveRecoveryTest, MultipleSlaves)
     .WillOnce(FutureArg<1>(&offers2));
 
   // Start the second slave.
-  slave::Flags flags2 = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags2 = this->CreateSlaveFlags();
 
 #ifdef __linux__
   // Disable putting slave into cgroup(s) because this is a multi-slave test.
@@ -3210,7 +3218,7 @@ TYPED_TEST(SlaveRecoveryTest, RestartBeforeContainerizerLaunch)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   TestContainerizer* containerizer1 = new TestContainerizer();
 
@@ -3309,7 +3317,7 @@ TEST_F(MesosContainerizerSlaveRecoveryTest, ResourceStatistics)
   Try<PID<Master> > master = this->StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -3412,7 +3420,7 @@ TEST_F(MesosContainerizerSlaveRecoveryTest, CGROUPS_ROOT_PerfRollForward)
 
   // Start a slave using a containerizer without a perf event
   // isolator.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.isolation = "cgroups/cpu,cgroups/mem";
   flags.slave_subsystems = "";
 
@@ -3565,7 +3573,7 @@ TEST_F(MesosContainerizerSlaveRecoveryTest, CGROUPS_ROOT_PidNamespaceForward)
 
   // Start a slave using a containerizer without pid namespace
   // isolation.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.isolation = "cgroups/cpu,cgroups/mem";
   flags.slave_subsystems = "";
 
@@ -3672,7 +3680,7 @@ TEST_F(MesosContainerizerSlaveRecoveryTest, CGROUPS_ROOT_PidNamespaceBackward)
   ASSERT_SOME(master);
 
   // Start a slave using a containerizer with pid namespace isolation.
-  slave::Flags flags = this->CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = this->CreateSlaveFlags();
   flags.isolation = "cgroups/cpu,cgroups/mem,namespaces/pid";
   flags.slave_subsystems = "";
 

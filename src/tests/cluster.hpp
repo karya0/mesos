@@ -191,7 +191,7 @@ public:
       process::Owned<slave::StatusUpdateManager> statusUpdateManager;
       process::Owned<slave::GarbageCollector> gc;
       process::Owned<MasterDetector> detector;
-      slave::Flags flags;
+      mesos::internal::slave::Flags flags;
       slave::Slave* slave;
     };
 

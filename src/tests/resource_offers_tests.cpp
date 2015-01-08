@@ -1014,7 +1014,7 @@ TEST_F(TaskValidationTest, AcquirePersistentDiskTooBig)
   Try<PID<Master>> master = StartMaster(masterFlags);
   ASSERT_SOME(master);
 
-  slave::Flags slaveFlags = CreateSlaveFlags();
+  mesos::internal::slave::Flags slaveFlags = CreateSlaveFlags();
   slaveFlags.resources = "cpus(*):4;mem(*):2048;disk(role1):1024";
 
   Try<PID<Slave>> slave = StartSlave(slaveFlags);
@@ -1100,7 +1100,7 @@ TEST_F(ResourceOffersTest, ResourceOfferWithMultipleSlaves)
 
   // Start 10 slaves.
   for (int i = 0; i < 10; i++) {
-    slave::Flags flags = CreateSlaveFlags();
+    mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
     flags.resources = Option<std::string>("cpus:2;mem:1024");
 

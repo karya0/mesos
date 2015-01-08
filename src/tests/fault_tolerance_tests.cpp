@@ -55,6 +55,7 @@ using namespace mesos::internal::tests;
 
 using mesos::internal::master::Master;
 
+using mesos::internal::slave::STATUS_UPDATE_RETRY_INTERVAL_MIN;
 using mesos::internal::slave::Slave;
 
 using process::Clock;
@@ -1095,7 +1096,7 @@ TEST_F(FaultToleranceTest, SchedulerFailoverStatusUpdate)
 
   // Now advance time enough for the reliable timeout
   // to kick in and another status update is sent.
-  Clock::advance(slave::STATUS_UPDATE_RETRY_INTERVAL_MIN);
+  Clock::advance(STATUS_UPDATE_RETRY_INTERVAL_MIN);
 
   AWAIT_READY(statusUpdate);
 

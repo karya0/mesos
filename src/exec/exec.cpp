@@ -707,7 +707,7 @@ Status MesosExecutorDriver::start()
     checkpoint = false;
   }
 
-  Duration recoveryTimeout = slave::RECOVERY_TIMEOUT;
+  Duration recoveryTimeout = internal::slave::RECOVERY_TIMEOUT;
 
   // Get the recovery timeout if checkpointing is enabled.
   if (checkpoint) {
@@ -725,7 +725,7 @@ Status MesosExecutorDriver::start()
   }
 
   // Get the appropriate shutdown grace period.
-  Duration shutdownTimeout = slave::EXECUTOR_SHUTDOWN_GRACE_PERIOD;
+  Duration shutdownTimeout = internal::slave::EXECUTOR_SHUTDOWN_GRACE_PERIOD;
   value = os::getenv("MESOS_SHUTDOWN_GRACE_PERIOD", false);
   if (!value.empty()) {
     Try<Duration> parse = Duration::parse(value);
@@ -740,7 +740,7 @@ Status MesosExecutorDriver::start()
                  << "set, using default value: " << shutdownTimeout;
   }
 
-  shutdownTimeout = slave::getExecGracePeriod(shutdownTimeout);
+  shutdownTimeout = internal::slave::getExecGracePeriod(shutdownTimeout);
   VLOG(2) << "Shutdown timeout is set to " << shutdownTimeout;
 
   CHECK(process == NULL);

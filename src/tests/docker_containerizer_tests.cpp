@@ -43,18 +43,14 @@
 
 using namespace mesos;
 using namespace mesos::internal;
+using namespace mesos::internal::slave;
 using namespace mesos::internal::slave::paths;
-using namespace mesos::internal::slave::state;
 using namespace mesos::internal::tests;
+using namespace mesos::slave::state;
 
 using namespace process;
 
 using mesos::internal::master::Master;
-
-using mesos::internal::slave::DockerContainerizer;
-using mesos::internal::slave::DockerContainerizerProcess;
-using mesos::internal::slave::Fetcher;
-using mesos::internal::slave::Slave;
 
 using process::Future;
 using process::Message;
@@ -121,7 +117,7 @@ public:
       const list<Docker::Container>& containers,
       const ContainerID& containerId)
   {
-    string expectedName = slave::DOCKER_NAME_PREFIX + stringify(containerId);
+    string expectedName = DOCKER_NAME_PREFIX + stringify(containerId);
 
     foreach (const Docker::Container& container, containers) {
       // Docker inspect name contains an extra slash in the beginning.
@@ -138,7 +134,7 @@ public:
       const list<Docker::Container>& containers,
       const ContainerID& containerId)
   {
-    string expectedName = slave::DOCKER_NAME_PREFIX + stringify(containerId);
+    string expectedName = DOCKER_NAME_PREFIX + stringify(containerId);
 
     foreach (const Docker::Container& container, containers) {
       // Docker inspect name contains an extra slash in the beginning.
@@ -156,7 +152,7 @@ public:
     Try<Docker*> docker = Docker::create(tests::flags.docker, false);
     ASSERT_SOME(docker);
     Future<list<Docker::Container>> containers =
-      docker.get()->ps(true, slave::DOCKER_NAME_PREFIX);
+      docker.get()->ps(true, DOCKER_NAME_PREFIX);
 
     AWAIT_READY(containers);
 
@@ -173,7 +169,7 @@ public:
 class MockDockerContainerizer : public DockerContainerizer {
 public:
   MockDockerContainerizer(
-      const slave::Flags& flags,
+      const mesos::internal::slave::Flags& flags,
       Fetcher* fetcher,
       Shared<Docker> docker)
     : DockerContainerizer(flags, fetcher, docker)
@@ -210,7 +206,7 @@ public:
           const std::string&,
           const Option<std::string>&,
           const SlaveID&,
-          const process::PID<slave::Slave>&,
+          const process::PID<mesos::internal::slave::Slave>&,
           bool checkpoint));
 
   MOCK_METHOD8(
@@ -222,7 +218,7 @@ public:
           const std::string&,
           const Option<std::string>&,
           const SlaveID&,
-          const process::PID<slave::Slave>&,
+          const process::PID<mesos::internal::slave::Slave>&,
           bool checkpoint));
 
   MOCK_METHOD2(
@@ -288,7 +284,7 @@ class MockDockerContainerizerProcess : public DockerContainerizerProcess
 {
 public:
   MockDockerContainerizerProcess(
-      const slave::Flags& flags,
+      const mesos::internal::slave::Flags& flags,
       Fetcher* fetcher,
       const Shared<Docker>& docker)
     : DockerContainerizerProcess(flags, fetcher, docker)
@@ -353,7 +349,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch_Executor)
                            Invoke((MockDocker*) docker.get(),
                                   &MockDocker::_logs)));
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -434,7 +430,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch_Executor)
   EXPECT_EQ(TASK_FINISHED, statusFinished.get().state());
 
   Future<list<Docker::Container>> containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -448,7 +444,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch_Executor)
 
   AWAIT_READY(termination);
 
-  containers = docker->ps(true, slave::DOCKER_NAME_PREFIX);
+  containers = docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -483,7 +479,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch_Executor_Bridged)
                            Invoke((MockDocker*) docker.get(),
                                   &MockDocker::_logs)));
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -565,7 +561,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch_Executor_Bridged)
   EXPECT_EQ(TASK_FINISHED, statusFinished.get().state());
 
   Future<list<Docker::Container>> containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -579,7 +575,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch_Executor_Bridged)
 
   AWAIT_READY(termination);
 
-  containers = docker->ps(true, slave::DOCKER_NAME_PREFIX);
+  containers = docker->ps(true, DOCKER_NAME_PREFIX);
   AWAIT_READY(containers);
 
   ASSERT_FALSE(running(containers.get(), containerId.get()));
@@ -609,7 +605,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch)
                            Invoke((MockDocker*) docker.get(),
                                   &MockDocker::_logs)));
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -680,7 +676,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch)
   EXPECT_EQ(TASK_RUNNING, statusRunning.get().state());
 
   Future<list<Docker::Container>> containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -696,7 +692,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Launch)
 
   AWAIT_READY(termination);
 
-  containers = docker->ps(true, slave::DOCKER_NAME_PREFIX);
+  containers = docker->ps(true, DOCKER_NAME_PREFIX);
 
   ASSERT_FALSE(running(containers.get(), containerId.get()));
 
@@ -724,7 +720,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Kill)
                            Invoke((MockDocker*) docker.get(),
                                   &MockDocker::_logs)));
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   Fetcher fetcher;
 
@@ -808,7 +804,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Kill)
   AWAIT_READY(termination);
 
   Future<list<Docker::Container>> containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -830,7 +826,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Usage)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
   flags.resources = Option<string>("cpus:2;mem:1024");
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
@@ -971,7 +967,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Update)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -1054,7 +1050,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Update)
   AWAIT_READY_FOR(statusRunning, Seconds(60));
   EXPECT_EQ(TASK_RUNNING, statusRunning.get().state());
 
-  string containerName = slave::DOCKER_NAME_PREFIX + containerId.get().value();
+  string containerName = DOCKER_NAME_PREFIX + containerId.get().value();
   Future<Docker::Container> container = docker->inspect(containerName);
 
   AWAIT_READY(container);
@@ -1138,7 +1134,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Update)
 // at the end of the test wait for all of them before the test exits.
 TEST_F(DockerContainerizerTest, DISABLED_ROOT_DOCKER_Recover)
 {
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -1168,7 +1164,7 @@ TEST_F(DockerContainerizerTest, DISABLED_ROOT_DOCKER_Recover)
     docker->run(
         containerInfo,
         commandInfo,
-        slave::DOCKER_NAME_PREFIX + stringify(containerId),
+        DOCKER_NAME_PREFIX + stringify(containerId),
         flags.work_dir,
         flags.docker_sandbox_directory,
         resources);
@@ -1177,7 +1173,7 @@ TEST_F(DockerContainerizerTest, DISABLED_ROOT_DOCKER_Recover)
     docker->run(
         containerInfo,
         commandInfo,
-        slave::DOCKER_NAME_PREFIX + stringify(reapedContainerId),
+        DOCKER_NAME_PREFIX + stringify(reapedContainerId),
         flags.work_dir,
         flags.docker_sandbox_directory,
         resources);
@@ -1199,7 +1195,7 @@ TEST_F(DockerContainerizerTest, DISABLED_ROOT_DOCKER_Recover)
   Try<process::Subprocess> wait =
     process::subprocess(
         tests::flags.docker + " wait " +
-        slave::DOCKER_NAME_PREFIX +
+        DOCKER_NAME_PREFIX +
         stringify(containerId));
 
   ASSERT_SOME(wait);
@@ -1207,7 +1203,7 @@ TEST_F(DockerContainerizerTest, DISABLED_ROOT_DOCKER_Recover)
   Try<process::Subprocess> reaped =
     process::subprocess(
         tests::flags.docker + " wait " +
-        slave::DOCKER_NAME_PREFIX +
+        DOCKER_NAME_PREFIX +
         stringify(reapedContainerId));
 
   ASSERT_SOME(reaped);
@@ -1248,7 +1244,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Logs)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -1376,7 +1372,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Default_CMD)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -1505,7 +1501,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Default_CMD_Override)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -1639,7 +1635,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Default_CMD_Args)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -1775,7 +1771,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_SlaveRecoveryTaskContainer)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   // Setup recovery slave flags.
   flags.checkpoint = true;
@@ -1907,7 +1903,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_SlaveRecoveryTaskContainer)
 
   // Make sure the container is still running.
   Future<list<Docker::Container>> containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -1948,7 +1944,7 @@ TEST_F(DockerContainerizerTest,
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   // Setup recovery slave flags.
   flags.checkpoint = true;
@@ -2105,7 +2101,7 @@ TEST_F(DockerContainerizerTest,
 
   // Make sure the container is still running.
   Future<list<Docker::Container>> containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -2130,7 +2126,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_PortMapping)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   flags.resources = "cpus:1;mem:1024;ports:[10000-10000]";
 
@@ -2276,7 +2272,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_LaunchSandboxWithColon)
   Try<PID<Master>> master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -2358,7 +2354,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_LaunchSandboxWithColon)
   EXPECT_EQ(TASK_RUNNING, statusRunning.get().state());
 
   Future<list<Docker::Container> > containers =
-    docker->ps(true, slave::DOCKER_NAME_PREFIX);
+    docker->ps(true, DOCKER_NAME_PREFIX);
 
   AWAIT_READY(containers);
 
@@ -2386,7 +2382,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_DestroyWhileFetching)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
@@ -2493,7 +2489,7 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_DestroyWhilePulling)
   Try<PID<Master> > master = StartMaster();
   ASSERT_SOME(master);
 
-  slave::Flags flags = CreateSlaveFlags();
+  mesos::internal::slave::Flags flags = CreateSlaveFlags();
 
   MockDocker* mockDocker = new MockDocker(tests::flags.docker);
   Shared<Docker> docker(mockDocker);
