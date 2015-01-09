@@ -331,8 +331,6 @@ inline std::ostream& operator << (
 }
 
 
-namespace internal {
-
 bool operator == (const Task& left, const Task& right);
 
 
@@ -340,6 +338,8 @@ std::ostream& operator << (
     std::ostream& stream,
     const StatusUpdate& update);
 
+
+namespace internal {
 
 inline std::ostream& operator << (
     std::ostream& stream,

@@ -37,10 +37,6 @@
 
 #include "common/type_utils.hpp"
 
-#include "messages/messages.hpp"
-
-#include "process/pid.hpp"
-
 namespace mesos {
 namespace internal {
 namespace slave {

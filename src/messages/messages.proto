@@ -27,67 +27,12 @@ package mesos.internal;
 // executor handles).
 
 
-// TODO(benh): It would be great if this could just be a
-// TaskInfo wherever it gets used! However, doing so would
-// require adding the framework_id field, the executor_id field, and
-// the state field into TaskInfo though (or send them another
-// way). Also, one performance reason why we don't do that now is
-// because storing whatever data is coupled with a TaskInfo
-// could be large and unnecessary.
-// TODO(bmahler): Add executor_uuid here, and send it to the master. This will
-// allow us to expose executor work directories for tasks in the webui when
-// looking from the master level. Currently only the slave knows which run the
-// task belongs to.
-message Task {
-  required string name = 1;
-  required TaskID task_id = 2;
-  required FrameworkID framework_id = 3;
-  optional ExecutorID executor_id = 4;
-  required SlaveID slave_id = 5;
-  required TaskState state = 6; // Latest state of the task.
-  repeated Resource resources = 7;
-  repeated TaskStatus statuses = 8;
-
-  // These fields correspond to the state and uuid of the latest
-  // status update forwarded to the master.
-  // NOTE: Either both the fields must be set or both must be unset.
-  optional TaskState status_update_state = 9;
-  optional bytes status_update_uuid = 10;
-
-  optional Labels labels = 11;
-
-  // Service discovery information for the task. It is not interpreted
-  // or acted upon by Mesos. It is up to a service discovery system
-  // to use this information as needed and to handle tasks without
-  // service discovery information.
-  optional DiscoveryInfo discovery = 12;
-}
-
-
 // Describes a role, which are used to group frameworks for allocation
 // decisions, depending on the allocation policy being used.
 // The weight field can be used to indicate forms of priority.
 message RoleInfo {
   required string name = 1;
   optional double weight = 2 [default = 1];
-}
-
-
-// TODO(vinod): Create a new UUID message type.
-message StatusUpdate {
-  required FrameworkID framework_id = 1;
-  optional ExecutorID executor_id = 2;
-  optional SlaveID slave_id = 3;
-  required TaskStatus status = 4;
-  required double timestamp = 5;
-  required bytes uuid = 6;
-
-  // This corresponds to the latest state of the task according to the
-  // slave. Note that this state might be different than the state in
-  // 'status' because status update manager queues updates. In other
-  // words, 'status' corresponds to the update at top of the queue and
-  // 'latest_state' corresponds to the update at bottom of the queue.
-  optional TaskState latest_state = 7;
 }
 
 

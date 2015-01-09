@@ -156,8 +156,6 @@ bool operator == (const Volume& left, const Volume& right)
 }
 
 
-namespace internal {
-
 bool operator == (const Task& left, const Task& right)
 {
   return left.name() == right.name() &&
@@ -190,5 +188,4 @@ std::ostream& operator << (
     << " of framework " << update.framework_id();
 }
 
-} // namespace internal {
 } // namespace mesos {

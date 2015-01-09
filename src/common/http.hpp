@@ -28,12 +28,11 @@
 namespace mesos {
 
 class Resources;
+class Task;
 
 namespace internal {
 
 class Attributes;
-class Task;
-
 
 JSON::Object model(const Resources& resources);
 JSON::Object model(const Attributes& attributes);
