@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+#include <mesos/slave/state.hpp>
+
 #include <stout/check.hpp>
 #include <stout/os.hpp>
 #include <stout/path.hpp>
@@ -29,7 +31,6 @@
 #include "messages/messages.hpp"
 
 #include "slave/paths.hpp"
-#include "slave/state.hpp"
 
 namespace mesos {
 namespace internal {

@@ -31,6 +31,8 @@
 
 #include <mesos/type_utils.hpp>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/async.hpp>
 #include <process/check.hpp>
 #include <process/defer.hpp>
@@ -82,7 +84,6 @@
 #include "slave/graceful_shutdown.hpp"
 #include "slave/paths.hpp"
 #include "slave/slave.hpp"
-#include "slave/state.hpp"
 #include "slave/status_update_manager.hpp"
 
 using std::list;

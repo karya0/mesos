@@ -30,6 +30,8 @@
 #include <mesos/resources.hpp>
 #include <mesos/type_utils.hpp>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/http.hpp>
 #include <process/future.hpp>
 #include <process/owned.hpp>
@@ -54,7 +56,6 @@
 #include "slave/metrics.hpp"
 #include "slave/monitor.hpp"
 #include "slave/paths.hpp"
-#include "slave/state.hpp"
 
 #include "common/attributes.hpp"
 #include "common/protobuf_utils.hpp"

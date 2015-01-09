@@ -22,11 +22,12 @@
 #include <list>
 #include <vector>
 
+#include <mesos/slave/isolator.hpp>
+
 #include <stout/hashmap.hpp>
 #include <stout/multihashmap.hpp>
 
 #include "slave/containerizer/containerizer.hpp"
-#include "slave/containerizer/isolator.hpp"
 #include "slave/containerizer/launcher.hpp"
 
 namespace mesos {

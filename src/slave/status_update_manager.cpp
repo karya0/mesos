@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 
+#include <mesos/slave/state.hpp>
+
 #include <process/delay.hpp>
 #include <process/process.hpp>
 #include <process/timer.hpp>
@@ -35,7 +37,6 @@
 #include "slave/constants.hpp"
 #include "slave/flags.hpp"
 #include "slave/slave.hpp"
-#include "slave/state.hpp"
 #include "slave/status_update_manager.hpp"
 
 using lambda::function;

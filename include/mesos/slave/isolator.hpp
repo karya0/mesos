@@ -16,13 +16,14 @@
  * limitations under the License.
  */
 
-#ifndef __ISOLATOR_HPP__
-#define __ISOLATOR_HPP__
+#pragma once
 
 #include <list>
 #include <string>
 
 #include <mesos/resources.hpp>
+
+#include <mesos/slave/state.hpp>
 
 #include <process/dispatch.hpp>
 #include <process/future.hpp>
@@ -30,8 +31,6 @@
 #include <process/process.hpp>
 
 #include <stout/try.hpp>
-
-#include "slave/state.hpp"
 
 namespace mesos {
 namespace slave {
@@ -145,5 +144,3 @@ public:
 
 } // namespace slave {
 } // namespace mesos {
-
-#endif // __ISOLATOR_HPP__

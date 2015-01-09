@@ -26,6 +26,8 @@
 #include <map>
 #include <string>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/dispatch.hpp>
 #include <process/future.hpp>
 #include <process/pid.hpp>
@@ -42,7 +44,6 @@
 #include "slave/containerizer/containerizer.hpp"
 
 #include "slave/slave.hpp"
-#include "slave/state.hpp"
 
 namespace mesos {
 namespace internal {

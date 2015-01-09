@@ -21,6 +21,9 @@
 
 #include <string>
 
+#include <mesos/slave/isolator.hpp>
+#include <mesos/slave/state.hpp>
+
 #include <process/owned.hpp>
 
 #include <stout/bytes.hpp>
@@ -28,9 +31,6 @@
 #include <stout/hashmap.hpp>
 
 #include "slave/flags.hpp"
-#include "slave/state.hpp"
-
-#include "slave/containerizer/isolator.hpp"
 
 namespace mesos {
 namespace internal {

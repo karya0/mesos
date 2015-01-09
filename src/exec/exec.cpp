@@ -26,6 +26,9 @@
 
 #include <mesos/executor.hpp>
 #include <mesos/mesos.hpp>
+
+#include <mesos/slave/state.hpp>
+
 #include <mesos/type_utils.hpp>
 
 #include <process/delay.hpp>
@@ -55,7 +58,6 @@
 
 #include "slave/constants.hpp"
 #include "slave/graceful_shutdown.hpp"
-#include "slave/state.hpp"
 
 using namespace mesos;
 using namespace mesos::internal;

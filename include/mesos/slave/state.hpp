@@ -16,8 +16,7 @@
  * limitations under the License.
  */
 
-#ifndef __SLAVE_STATE_HPP__
-#define __SLAVE_STATE_HPP__
+#pragma once
 
 #include <unistd.h>
 
@@ -206,5 +205,3 @@ struct TaskState
 } // namespace state {
 } // namespace slave {
 } // namespace mesos {
-
-#endif // __SLAVE_STATE_HPP__

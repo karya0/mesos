@@ -79,6 +79,9 @@ using mesos::internal::slave::MesosContainerizer;
 using mesos::internal::slave::MesosContainerizerLaunch;
 using mesos::internal::slave::PortMappingIsolatorProcess;
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
+
 using std::list;
 using std::ostringstream;
 using std::set;

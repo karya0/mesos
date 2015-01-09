@@ -21,8 +21,7 @@
 
 #include <mesos/mesos.hpp>
 #include <mesos/module.hpp>
-
-#include "slave/containerizer/isolator.hpp"
+#include <mesos/slave/isolator.hpp>
 
 namespace mesos {
 namespace modules {

@@ -19,6 +19,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/future.hpp>
 #include <process/gmock.hpp>
 #include <process/owned.hpp>
@@ -38,8 +40,6 @@
 
 #include "slave/paths.hpp"
 #include "slave/slave.hpp"
-#include "slave/state.hpp"
-
 
 using namespace mesos;
 using namespace mesos::internal;

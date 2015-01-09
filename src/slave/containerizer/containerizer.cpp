@@ -19,6 +19,8 @@
 #include <map>
 #include <vector>
 
+#include <mesos/slave/isolator.hpp>
+
 #include <process/dispatch.hpp>
 #include <process/owned.hpp>
 

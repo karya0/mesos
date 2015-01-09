@@ -27,6 +27,8 @@
 #include <mesos/resources.hpp>
 #include <mesos/scheduler.hpp>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/dispatch.hpp>
 #include <process/gmock.hpp>
 #include <process/owned.hpp>
@@ -47,7 +49,6 @@
 #include "slave/gc.hpp"
 #include "slave/paths.hpp"
 #include "slave/slave.hpp"
-#include "slave/state.hpp"
 
 #include "slave/containerizer/containerizer.hpp"
 #include "slave/containerizer/fetcher.hpp"

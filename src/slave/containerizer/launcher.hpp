@@ -23,6 +23,8 @@
 #include <map>
 #include <string>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/future.hpp>
 #include <process/subprocess.hpp>
 
@@ -32,7 +34,6 @@
 #include <stout/try.hpp>
 
 #include "slave/flags.hpp"
-#include "slave/state.hpp"
 
 namespace mesos {
 namespace internal {

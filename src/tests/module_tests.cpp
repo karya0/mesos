@@ -18,6 +18,8 @@
 
 #include <mesos/module.hpp>
 
+#include <mesos/slave/isolator.hpp>
+
 #include <stout/dynamiclibrary.hpp>
 #include <stout/os.hpp>
 
@@ -25,7 +27,6 @@
 #include "examples/test_module.hpp"
 #include "module/isolator.hpp"
 #include "module/manager.hpp"
-#include "slave/containerizer/isolator.hpp"
 
 #include "tests/flags.hpp"
 #include "tests/mesos.hpp"
@@ -36,6 +37,7 @@ using namespace mesos;
 using namespace mesos::internal;
 using namespace mesos::internal::slave;
 using namespace mesos::internal::tests;
+
 using namespace mesos::modules;
 using namespace mesos::slave;
 

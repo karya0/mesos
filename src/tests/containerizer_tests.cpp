@@ -22,17 +22,18 @@
 
 #include <gmock/gmock.h>
 
+#include <mesos/mesos.hpp>
+
+#include <mesos/slave/isolator.hpp>
+
 #include <process/future.hpp>
 #include <process/owned.hpp>
 
 #include <stout/strings.hpp>
 
-#include <mesos/mesos.hpp>
-
 #include "slave/flags.hpp"
 
 #include "slave/containerizer/fetcher.hpp"
-#include "slave/containerizer/isolator.hpp"
 #include "slave/containerizer/launcher.hpp"
 
 #include "slave/containerizer/mesos/containerizer.hpp"
@@ -45,7 +46,6 @@
 using namespace mesos;
 using namespace mesos::internal;
 using namespace mesos::internal::slave;
-
 using namespace mesos::slave;
 
 using std::map;

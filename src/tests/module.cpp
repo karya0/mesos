@@ -35,6 +35,9 @@ using namespace mesos::internal;
 using namespace mesos::internal::tests;
 using namespace mesos::modules;
 
+using mesos::slave::Isolator;
+using mesos::slave::IsolatorProcess;
+
 static hashmap<ModuleID, string> moduleNames;
 
 

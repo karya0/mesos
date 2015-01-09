@@ -26,6 +26,8 @@
 
 #include <mesos/type_utils.hpp>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/pid.hpp>
 #include <process/process.hpp>
 #include <process/protobuf.hpp>
@@ -48,7 +50,6 @@
 #include "messages/messages.hpp"
 
 #include "slave/flags.hpp"
-#include "slave/state.hpp"
 
 namespace mesos {
 namespace internal {

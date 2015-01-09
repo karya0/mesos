@@ -19,6 +19,8 @@
 #include <list>
 #include <vector>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/collect.hpp>
 #include <process/defer.hpp>
 #include <process/dispatch.hpp>
@@ -26,8 +28,6 @@
 #include <stout/hashmap.hpp>
 #include <stout/hashset.hpp>
 #include <stout/lambda.hpp>
-
-#include "slave/state.hpp"
 
 #include "slave/containerizer/containerizer.hpp"
 #include "slave/containerizer/composing.hpp"

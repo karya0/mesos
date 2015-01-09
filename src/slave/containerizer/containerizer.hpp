@@ -26,6 +26,8 @@
 
 #include <mesos/containerizer/containerizer.hpp>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/future.hpp>
 #include <process/owned.hpp>
 #include <process/process.hpp>
@@ -36,8 +38,6 @@
 #include <stout/try.hpp>
 
 #include "slave/containerizer/fetcher.hpp"
-
-#include "slave/state.hpp"
 
 namespace mesos {
 namespace internal {

@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include <mesos/slave/state.hpp>
+
 #include <process/pid.hpp>
 
 #include <stout/error.hpp>
@@ -18,7 +20,6 @@
 #include "messages/messages.hpp"
 
 #include "slave/paths.hpp"
-#include "slave/state.hpp"
 
 using std::list;
 using std::string;
