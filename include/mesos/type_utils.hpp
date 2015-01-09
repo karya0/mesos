@@ -16,8 +16,7 @@
  * limitations under the License.
  */
 
-#ifndef __TYPE_UTILS_HPP__
-#define __TYPE_UTILS_HPP__
+#pragma once
 
 #include <boost/functional/hash.hpp>
 
@@ -334,5 +333,3 @@ std::ostream& operator << (
     const StatusUpdate& update);
 
 } // namespace mesos {
-
-#endif // __TYPE_UTILS_HPP__
