@@ -16,19 +16,16 @@
  * limitations under the License.
  */
 
-#ifndef __HOOK_HOOK_HPP__
-#define __HOOK_HOOK_HPP__
+#pragma once
 
 #include <mesos/mesos.hpp>
 
 #include <stout/none.hpp>
+#include <stout/nothing.hpp>
 #include <stout/result.hpp>
-
-#include "master/master.hpp"
-#include "slave/slave.hpp"
+#include <stout/try.hpp>
 
 namespace mesos {
-namespace internal {
 
 class Hook
 {
@@ -70,7 +67,4 @@ public:
   }
 };
 
-} // namespace internal {
 } // namespace mesos {
-
-#endif // __HOOK_HOOK_HPP__

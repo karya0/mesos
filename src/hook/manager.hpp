@@ -16,16 +16,14 @@
  * limitations under the License.
  */
 
-#ifndef __HOOK_MANAGER_HPP__
-#define __HOOK_MANAGER_HPP__
+#pragma once
 
 #include <string>
 
 #include <mesos/mesos.hpp>
+#include <mesos/hook.hpp>
 
-#include "hook/hook.hpp"
-#include "master/master.hpp"
-#include "messages/messages.hpp"
+#include <stout/try.hpp>
 
 namespace mesos {
 namespace internal {
@@ -56,5 +54,3 @@ public:
 
 } // namespace internal {
 } // namespace mesos {
-
-#endif // __HOOK_MANAGER_HPP__
