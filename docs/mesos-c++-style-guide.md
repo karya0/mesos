@@ -6,6 +6,11 @@ layout: documentation
 
 The Mesos codebase follows the [Google C++ Style Guide](http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml) with the following differences:
 
+## Header Files
+
+* We use `#pragma once` instead of the `#define` guard to prevent multiple
+inclusions.
+
 ## Naming
 
 ### Variable Names
