@@ -299,7 +299,7 @@ protected:
       int pipes[2],
       const ContainerID& containerId,
       const string& command,
-      const Option<CommandInfo>& preparation)
+      const Option<ContainerPrepareInfo>& preparation)
   {
     CommandInfo commandInfo;
     commandInfo.set_value(command);
@@ -318,7 +318,7 @@ protected:
 
     JSON::Object commands;
     JSON::Array array;
-    array.values.push_back(JSON::Protobuf(preparation.get()));
+    array.values.push_back(JSON::Protobuf(preparation.get().command()));
     commands.values["commands"] = array;
 
     launchFlags.commands = commands;
@@ -451,7 +451,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerTCP)
   Try<string> dir1 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir1);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId1,
         executorInfo,
@@ -518,7 +518,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerTCP)
   Try<string> dir2 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir2);
 
-  Future<Option<CommandInfo> > preparation2 =
+  Future<Option<ContainerPrepareInfo>> preparation2 =
     isolator.get()->prepare(
         containerId2,
         executorInfo,
@@ -611,7 +611,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerUDP)
   Try<string> dir1 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir1);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId1,
         executorInfo,
@@ -678,7 +678,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerUDP)
   Try<string> dir2 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir2);
 
-  Future<Option<CommandInfo> > preparation2 =
+  Future<Option<ContainerPrepareInfo>> preparation2 =
     isolator.get()->prepare(
         containerId2,
         executorInfo,
@@ -773,7 +773,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_HostToContainerUDP)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -890,7 +890,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_HostToContainerTCP)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -1015,7 +1015,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_ContainerICMPExternal)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -1101,7 +1101,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_ContainerICMPInternal)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -1190,7 +1190,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_ContainerARPExternal)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -1285,7 +1285,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_DNS)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -1376,7 +1376,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_TooManyContainers)
   Try<string> dir1 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir1);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId1,
         executorInfo,
@@ -1427,7 +1427,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_TooManyContainers)
   Try<string> dir2 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir2);
 
-  Future<Option<CommandInfo> > preparation2 =
+  Future<Option<ContainerPrepareInfo>> preparation2 =
     isolator.get()->prepare(
         containerId2,
         executorInfo,
@@ -1493,7 +1493,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_SmallEgressLimit)
   Try<string> dir = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
@@ -1647,7 +1647,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_PortMappingStatistics)
   Try<string> dir1 = os::mkdtemp(path::join(os::getcwd(), "XXXXXX"));
   ASSERT_SOME(dir1);
 
-  Future<Option<CommandInfo> > preparation1 =
+  Future<Option<ContainerPrepareInfo>> preparation1 =
     isolator.get()->prepare(
         containerId,
         executorInfo,
