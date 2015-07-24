@@ -63,9 +63,9 @@ using mesos::internal::slave::state::FrameworkState;
 using mesos::internal::slave::state::RunState;
 using mesos::internal::slave::state::SlaveState;
 
+using mesos::slave::ContainerLimitation;
 using mesos::slave::ContainerPrepareInfo;
-using mesos::slave::ExecutorLimitation;
-using mesos::slave::ExecutorRunState;
+using mesos::slave::ContainerState;
 using mesos::slave::Isolator;
 
 using std::list;
@@ -481,7 +481,7 @@ public:
   MOCK_METHOD2(
       recover,
       Future<Nothing>(
-          const list<ExecutorRunState>&,
+          const list<ContainerState>&,
           const hashset<ContainerID>&));
 
   MOCK_METHOD5(
@@ -509,7 +509,7 @@ public:
 
   MOCK_METHOD1(
       watch,
-      Future<mesos::slave::ExecutorLimitation>(const ContainerID&));
+      Future<mesos::slave::ContainerLimitation>(const ContainerID&));
 
   MOCK_METHOD2(
       update,
@@ -523,7 +523,7 @@ public:
       cleanup,
       Future<Nothing>(const ContainerID&));
 
-  Promise<mesos::slave::ExecutorLimitation> watchPromise;
+  Promise<mesos::slave::ContainerLimitation> watchPromise;
 };
 
 
