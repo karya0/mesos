@@ -78,6 +78,7 @@ using namespace routing::queueing;
 
 using mesos::internal::master::Master;
 
+using mesos::slave::ContainerPrepareInfo;
 using mesos::slave::Isolator;
 
 using std::list;
@@ -316,9 +317,11 @@ protected:
     launchFlags.pipe_read = pipes[0];
     launchFlags.pipe_write = pipes[1];
 
+    ASSERT_EQ(1, preparation.get().commands().size());
+
     JSON::Object commands;
     JSON::Array array;
-    array.values.push_back(JSON::Protobuf(preparation.get().command()));
+    array.values.push_back(JSON::Protobuf(preparation.get().commands(0)));
     commands.values["commands"] = array;
 
     launchFlags.commands = commands;
@@ -461,6 +464,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerTCP)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
 
@@ -528,6 +532,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerTCP)
 
   AWAIT_READY(preparation2);
   ASSERT_SOME(preparation2.get());
+  ASSERT_EQ(1, preparation2.get().get().commands().size());
 
   ostringstream command2;
 
@@ -621,6 +626,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerUDP)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
 
@@ -688,6 +694,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_ContainerToContainerUDP)
 
   AWAIT_READY(preparation2);
   ASSERT_SOME(preparation2.get());
+  ASSERT_EQ(1, preparation2.get().get().commands().size());
 
   ostringstream command2;
 
@@ -783,6 +790,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_HostToContainerUDP)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
 
@@ -900,6 +908,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_HostToContainerTCP)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
 
@@ -1025,6 +1034,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_ContainerICMPExternal)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
   for (unsigned int i = 0; i < nameServers.size(); i++) {
@@ -1111,6 +1121,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_ContainerICMPInternal)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
   command1 << "ping -c1 127.0.0.1 && ping -c1 " << hostIP
@@ -1200,6 +1211,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_ContainerARPExternal)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
   for (unsigned int i = 0; i < nameServers.size(); i++) {
@@ -1295,6 +1307,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_DNS)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
   for (unsigned int i = 0; i < nameServers.size(); i++) {
@@ -1386,6 +1399,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_TooManyContainers)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   ostringstream command1;
   command1 << "sleep 1000";
@@ -1503,6 +1517,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_SmallEgressLimit)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   // Fill 'size' bytes of data. The actual content does not matter.
   string data(size.bytes(), 'a');
@@ -1657,6 +1672,7 @@ TEST_F(PortMappingIsolatorTest, ROOT_NC_PortMappingStatistics)
 
   AWAIT_READY(preparation1);
   ASSERT_SOME(preparation1.get());
+  ASSERT_EQ(1, preparation1.get().get().commands().size());
 
   // Fill 'size' bytes of data. The actual content does not matter.
   string data(size.bytes(), 'a');
