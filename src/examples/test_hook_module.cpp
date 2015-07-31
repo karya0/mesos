@@ -152,6 +152,7 @@ public:
 
   virtual Result<Labels> slaveTaskStatusLabelDecorator(
       const FrameworkID& frameworkId,
+      const ExecutorID& executorId,
       const TaskStatus& status)
   {
     LOG(INFO) << "Executing 'slaveTaskStatusLabelDecorator' hook";

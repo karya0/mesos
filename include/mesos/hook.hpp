@@ -86,6 +86,7 @@ public:
   // labels on the TaskStatus.
   virtual Result<Labels> slaveTaskStatusLabelDecorator(
       const FrameworkID& frameworkId,
+      const ExecutorID& executorId,
       const TaskStatus& status)
   {
     return None();

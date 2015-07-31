@@ -200,12 +200,13 @@ void HookManager::slaveRemoveExecutorHook(
 
 Labels HookManager::slaveTaskStatusLabelDecorator(
     const FrameworkID& frameworkId,
+    const ExecutorID& executorId,
     TaskStatus status)
 {
   synchronized (mutex) {
     foreachpair (const string& name, Hook* hook, availableHooks) {
       const Result<Labels> result =
-        hook->slaveTaskStatusLabelDecorator(frameworkId, status);
+        hook->slaveTaskStatusLabelDecorator(frameworkId, executorId, status);
 
       // NOTE: Labels remain unchanged if the hook returns None().
       if (result.isSome()) {

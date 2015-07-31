@@ -59,6 +59,7 @@ public:
 
   static Labels slaveTaskStatusLabelDecorator(
       const FrameworkID& frameworkId,
+      const ExecutorID& executorId,
       TaskStatus status);
 };
 
