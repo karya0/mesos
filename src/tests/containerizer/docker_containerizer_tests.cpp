@@ -1202,7 +1202,13 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Recover)
 
   SlaveState slaveState;
   slaveState.id = slaveId;
+
+  FrameworkID frameworkId;
+  frameworkId.set_value(UUID::random().toString());
+  FrameworkInfo frameworkInfo = DEFAULT_FRAMEWORK_INFO;
+  frameworkInfo.mutable_id()->CopyFrom(frameworkId);
   FrameworkState frameworkState;
+  frameworkState.info = frameworkInfo;
 
   ExecutorID execId;
   execId.set_value("e1");
@@ -1216,8 +1222,6 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_Recover)
     process::subprocess(tests::flags.docker + " wait " + container1);
 
   ASSERT_SOME(wait);
-
-  FrameworkID frameworkId;
 
   RunState runState;
   runState.id = containerId;
@@ -1276,12 +1280,15 @@ TEST_F(DockerContainerizerTest, ROOT_DOCKER_SkipRecoverNonDocker)
   runState.id = containerId;
   executorState.runs.put(containerId, runState);
 
+  FrameworkID frameworkId;
+  frameworkId.set_value(UUID::random().toString());
+  FrameworkInfo frameworkInfo = DEFAULT_FRAMEWORK_INFO;
+  frameworkInfo.mutable_id()->CopyFrom(frameworkId);
   FrameworkState frameworkState;
+  frameworkState.info = frameworkInfo;
   frameworkState.executors.put(executorId, executorState);
 
   SlaveState slaveState;
-  FrameworkID frameworkId;
-  frameworkId.set_value(UUID::random().toString());
   slaveState.frameworks.put(frameworkId, frameworkState);
 
   Future<Nothing> recover = dockerContainerizer.recover(slaveState);

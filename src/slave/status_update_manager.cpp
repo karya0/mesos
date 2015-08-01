@@ -206,14 +206,20 @@ Future<Nothing> StatusUpdateManagerProcess::recover(
   }
 
   foreachvalue (const FrameworkState& framework, state.get().frameworks) {
+    if (!framework.info.isSome() || !framework.info.get().has_id()) {
+      CHECK_EQ(0u, framework.executors.size());
+      continue;
+    }
+
+    const FrameworkID frameworkId = framework.info.get().id();
     foreachvalue (const ExecutorState& executor, framework.executors) {
       LOG(INFO) << "Recovering executor '" << executor.id
-                << "' of framework " << framework.id;
+                << "' of framework " << frameworkId;
 
       if (executor.info.isNone()) {
         LOG(WARNING) << "Skipping recovering updates of"
                      << " executor '" << executor.id
-                     << "' of framework " << framework.id
+                     << "' of framework " << frameworkId
                      << " because its info cannot be recovered";
         continue;
       }
@@ -221,7 +227,7 @@ Future<Nothing> StatusUpdateManagerProcess::recover(
       if (executor.latest.isNone()) {
         LOG(WARNING) << "Skipping recovering updates of"
                      << " executor '" << executor.id
-                     << "' of framework " << framework.id
+                     << "' of framework " << frameworkId
                      << " because its latest run cannot be recovered";
         continue;
       }
@@ -234,7 +240,7 @@ Future<Nothing> StatusUpdateManagerProcess::recover(
       if (run.get().completed) {
         VLOG(1) << "Skipping recovering updates of"
                 << " executor '" << executor.id
-                << "' of framework " << framework.id
+                << "' of framework " << frameworkId
                 << " because its latest run " << latest.value()
                 << " is completed";
         continue;
@@ -247,20 +253,20 @@ Future<Nothing> StatusUpdateManagerProcess::recover(
         // 2) executor launched it but the slave died before it got any updates.
         if (task.updates.empty()) {
           LOG(WARNING) << "No updates found for task " << task.id
-                       << " of framework " << framework.id;
+                       << " of framework " << frameworkId;
           continue;
         }
 
         // Create a new status update stream.
         StatusUpdateStream* stream = createStatusUpdateStream(
-            task.id, framework.id, state.get().id, true, executor.id, latest);
+            task.id, frameworkId, state.get().id, true, executor.id, latest);
 
         // Replay the stream.
         Try<Nothing> replay = stream->replay(task.updates, task.acks);
         if (replay.isError()) {
           return Failure(
               "Failed to replay status updates for task " + stringify(task.id) +
-              " of framework " + stringify(framework.id) +
+              " of framework " + stringify(frameworkId) +
               ": " + replay.error());
         }
 
@@ -269,7 +275,7 @@ Future<Nothing> StatusUpdateManagerProcess::recover(
         // pending updates will be flushed after the slave
         // re-registers with the master.
         if (stream->terminated) {
-          cleanupStatusUpdateStream(task.id, framework.id);
+          cleanupStatusUpdateStream(task.id, frameworkId);
         }
       }
     }

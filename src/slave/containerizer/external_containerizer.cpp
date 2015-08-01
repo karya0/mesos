@@ -306,17 +306,23 @@ Future<Nothing> ExternalContainerizerProcess::__recover(
 
   if (state.isSome()) {
     foreachvalue (const FrameworkState& framework, state.get().frameworks) {
+      if (!framework.info.isSome() || !framework.info.get().has_id()) {
+        CHECK_EQ(0u, framework.executors.size());
+        continue;
+      }
+
+      const FrameworkID frameworkId = framework.info.get().id();
       foreachvalue (const ExecutorState& executor, framework.executors) {
         if (executor.info.isNone()) {
           LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                       << "' of framework " << framework.id
+                       << "' of framework " << frameworkId
                        << " because its info could not be recovered";
           continue;
         }
 
         if (executor.latest.isNone()) {
           LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                       << "' of framework " << framework.id
+                       << "' of framework " << frameworkId
                        << " because its latest run could not be recovered";
           continue;
         }
@@ -328,7 +334,7 @@ Future<Nothing> ExternalContainerizerProcess::__recover(
 
         if (run.get().completed) {
           VLOG(1) << "Skipping recovery of executor '" << executor.id
-                  << "' of framework " << framework.id
+                  << "' of framework " << frameworkId
                   << " because its latest run "
                   << containerId << " is completed";
           continue;
@@ -339,7 +345,7 @@ Future<Nothing> ExternalContainerizerProcess::__recover(
         // recoverable.
         if (!containers.contains(containerId)) {
           LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                       << "' of framework " << framework.id
+                       << "' of framework " << frameworkId
                        << " because the external containerizer has not "
                        << " identified " << containerId << " as active";
           continue;
@@ -347,7 +353,7 @@ Future<Nothing> ExternalContainerizerProcess::__recover(
 
         LOG(INFO) << "Recovering container '" << containerId
                   << "' for executor '" << executor.id
-                  << "' of framework " << framework.id;
+                  << "' of framework " << frameworkId;
 
         Option<string> user = None();
         if (flags.switch_user) {
@@ -357,7 +363,7 @@ Future<Nothing> ExternalContainerizerProcess::__recover(
           if (executor.info.isSome() &&
               executor.info.get().command().has_user()) {
             user = executor.info.get().command().user();
-          } else if (framework.info.isSome()) {
+          } else {
             user = framework.info.get().user();
           }
         }
@@ -366,7 +372,7 @@ Future<Nothing> ExternalContainerizerProcess::__recover(
         const string directory = paths::createExecutorDirectory(
             flags.work_dir,
             state.get().id,
-            framework.id,
+            frameworkId,
             executor.id,
             containerId,
             user);

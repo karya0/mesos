@@ -584,17 +584,23 @@ Future<Nothing> DockerContainerizerProcess::_recover(
   hashmap<ContainerID, pid_t> pids;
 
   foreachvalue (const FrameworkState& framework, state.frameworks) {
+    if (!framework.info.isSome() || !framework.info.get().has_id()) {
+      CHECK_EQ(0u, framework.executors.size());
+      continue;
+    }
+
+    const FrameworkID frameworkId = framework.info.get().id();
     foreachvalue (const ExecutorState& executor, framework.executors) {
       if (executor.info.isNone()) {
         LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                     << "' of framework " << framework.id
+                     << "' of framework " << frameworkId
                      << " because its info could not be recovered";
         continue;
       }
 
       if (executor.latest.isNone()) {
         LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                     << "' of framework " << framework.id
+                     << "' of framework " << frameworkId
                      << " because its latest run could not be recovered";
         continue;
       }
@@ -617,7 +623,7 @@ Future<Nothing> DockerContainerizerProcess::_recover(
 
       if (run.get().completed) {
         VLOG(1) << "Skipping recovery of executor '" << executor.id
-                << "' of framework " << framework.id
+                << "' of framework " << frameworkId
                 << " because its latest run "
                 << containerId << " is completed";
         continue;
@@ -627,7 +633,7 @@ Future<Nothing> DockerContainerizerProcess::_recover(
       if (executorInfo.has_container() &&
           executorInfo.container().type() != ContainerInfo::DOCKER) {
         LOG(INFO) << "Skipping recovery of executor '" << executor.id
-                  << "' of framework " << framework.id
+                  << "' of framework " << frameworkId
                   << " because it was not launched from docker containerizer";
         continue;
       }
@@ -635,7 +641,7 @@ Future<Nothing> DockerContainerizerProcess::_recover(
       if (!executorInfo.has_container() &&
           !existingContainers.contains(containerId)) {
         LOG(INFO) << "Skipping recovery of executor '" << executor.id
-                  << "' of framework " << framework.id
+                  << "' of framework " << frameworkId
                   << " because its executor is not marked as docker "
                   << "and the docker container doesn't exist";
         continue;
@@ -643,7 +649,7 @@ Future<Nothing> DockerContainerizerProcess::_recover(
 
       LOG(INFO) << "Recovering container '" << containerId
                 << "' for executor '" << executor.id
-                << "' of framework " << framework.id;
+                << "' of framework " << frameworkId;
 
       // Create and store a container.
       Container* container = new Container(containerId);

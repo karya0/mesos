@@ -779,12 +779,17 @@ TEST_F(MesosContainerizerRecoverTest, SkipRecoverNonMesosContainers)
   runState.id = containerId;
   executorState.runs.put(containerId, runState);
 
+  FrameworkID frameworkId;
+  frameworkId.set_value(UUID::random().toString());
+
+  FrameworkInfo frameworkInfo(DEFAULT_FRAMEWORK_INFO);
+  frameworkInfo.mutable_id()->CopyFrom(frameworkId);
+
   FrameworkState frameworkState;
+  frameworkState.info = frameworkInfo;
   frameworkState.executors.put(executorId, executorState);
 
   SlaveState slaveState;
-  FrameworkID frameworkId;
-  frameworkId.set_value(UUID::random().toString());
   slaveState.frameworks.put(frameworkId, frameworkState);
 
   Future<Nothing> recover = containerizer.get()->recover(slaveState);

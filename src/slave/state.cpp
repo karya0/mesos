@@ -197,7 +197,6 @@ Try<FrameworkState> FrameworkState::recover(
     bool strict)
 {
   FrameworkState state;
-  state.id = frameworkId;
   string message;
 
   // Read the framework info.

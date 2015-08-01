@@ -4153,25 +4153,25 @@ void Slave::__recover(const Future<Nothing>& future)
 
 void Slave::recoverFramework(const FrameworkState& state)
 {
-  LOG(INFO) << "Recovering framework " << state.id;
+  CHECK_SOME(state.info);
+  FrameworkInfo frameworkInfo = state.info.get();
+  CHECK(frameworkInfo.has_id());
+
+  LOG(INFO) << "Recovering framework " << frameworkInfo.id();
 
   if (state.executors.empty()) {
     // GC the framework work directory.
     garbageCollect(
-        paths::getFrameworkPath(flags.work_dir, info.id(), state.id));
+        paths::getFrameworkPath(flags.work_dir, info.id(), frameworkInfo.id()));
 
     // GC the framework meta directory.
     garbageCollect(
-        paths::getFrameworkPath(metaDir, info.id(), state.id));
+        paths::getFrameworkPath(metaDir, info.id(), frameworkInfo.id()));
 
     return;
   }
 
-  CHECK(!frameworks.contains(state.id));
-
-  CHECK_SOME(state.info);
-  FrameworkInfo frameworkInfo = state.info.get();
-  CHECK(frameworkInfo.has_id());
+  CHECK(!frameworks.contains(frameworkInfo.id()));
 
   // In 0.24.0, HTTP schedulers are supported and these do not
   // have a 'pid'. In this case, the slave will checkpoint UPID().

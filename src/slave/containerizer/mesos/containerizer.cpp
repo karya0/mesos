@@ -352,17 +352,23 @@ Future<Nothing> MesosContainerizerProcess::recover(
   list<ContainerState> recoverable;
   if (state.isSome()) {
     foreachvalue (const FrameworkState& framework, state.get().frameworks) {
+      if (!framework.info.isSome() || !framework.info.get().has_id()) {
+        CHECK_EQ(0u, framework.executors.size());
+        continue;
+      }
+
+      const FrameworkID frameworkId = framework.info.get().id();
       foreachvalue (const ExecutorState& executor, framework.executors) {
         if (executor.info.isNone()) {
           LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                       << "' of framework " << framework.id
+                       << "' of framework " << frameworkId
                        << " because its info could not be recovered";
           continue;
         }
 
         if (executor.latest.isNone()) {
           LOG(WARNING) << "Skipping recovery of executor '" << executor.id
-                       << "' of framework " << framework.id
+                       << "' of framework " << frameworkId
                        << " because its latest run could not be recovered";
           continue;
         }
@@ -383,7 +389,7 @@ Future<Nothing> MesosContainerizerProcess::recover(
 
         if (run.get().completed) {
           VLOG(1) << "Skipping recovery of executor '" << executor.id
-                  << "' of framework " << framework.id
+                  << "' of framework " << frameworkId
                   << " because its latest run "
                   << containerId << " is completed";
           continue;
@@ -396,14 +402,14 @@ Future<Nothing> MesosContainerizerProcess::recover(
         if (executorInfo.has_container() &&
             executorInfo.container().type() != ContainerInfo::MESOS) {
           LOG(INFO) << "Skipping recovery of executor '" << executor.id
-                    << "' of framework " << framework.id
+                    << "' of framework " << frameworkId
                     << " because it was not launched from mesos containerizer";
           continue;
         }
 
         LOG(INFO) << "Recovering container '" << containerId
                   << "' for executor '" << executor.id
-                  << "' of framework " << framework.id;
+                  << "' of framework " << frameworkId;
 
         // NOTE: We create the executor directory before checkpointing
         // the executor. Therefore, it's not possible for this
@@ -411,7 +417,7 @@ Future<Nothing> MesosContainerizerProcess::recover(
         const string& directory = paths::getExecutorRunPath(
             flags.work_dir,
             state.get().id,
-            framework.id,
+            frameworkId,
             executor.id,
             containerId);
 

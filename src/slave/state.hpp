@@ -246,7 +246,6 @@ struct FrameworkState
       const FrameworkID& frameworkId,
       bool strict);
 
-  FrameworkID id;
   Option<FrameworkInfo> info;
 
   // Note that HTTP frameworks (supported in 0.24.0) do not have a
