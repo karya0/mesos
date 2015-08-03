@@ -514,6 +514,9 @@ protected:
     // the HTTP API, this can be overwritten by the slave instead.
     update->mutable_status()->mutable_slave_id()->CopyFrom(slaveId);
 
+    // Overwrite the ExecutorID.
+    update->mutable_status()->mutable_executor_id()->CopyFrom(executorId);
+
     VLOG(1) << "Executor sending status update " << *update;
 
     // Capture the status update.
