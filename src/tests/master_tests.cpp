@@ -3337,9 +3337,13 @@ TEST_F(MasterTest, TaskStatusContainerStatus)
 
   const string slaveIPAddress = stringify(slave.get().address.ip);
 
+  EXPECT_TRUE(status.get().has_container_status());
+
+  // Verify that the slave has passed in the container id.
+  EXPECT_TRUE(status.get().container_status().has_container_id());
+
   // Validate that the Slave has passed in its IP address in
   // TaskStatus.container_status.network_infos[0].ip_address.
-  EXPECT_TRUE(status.get().has_container_status());
   EXPECT_EQ(1, status.get().container_status().network_infos().size());
   EXPECT_TRUE(
       status.get().container_status().network_infos(0).has_ip_address());

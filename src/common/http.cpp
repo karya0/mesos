@@ -200,6 +200,10 @@ JSON::Object model(const ContainerStatus& status)
     object.values["network_infos"] = std::move(array);
   }
 
+  if (status.has_container_id()) {
+    object.values["container_id"] = status.container_id().value();
+  }
+
   return object;
 }
 

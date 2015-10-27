@@ -2835,9 +2835,7 @@ void Slave::statusUpdate(StatusUpdate update, const UPID& pid)
     networkInfo->set_ip_address(stringify(self().address.ip));
   }
 
-  TaskStatus status = update.status();
-
-  Executor* executor = framework->getExecutor(status.task_id());
+  Executor* executor = framework->getExecutor(update.status().task_id());
   if (executor == NULL) {
     LOG(WARNING)  << "Could not find the executor for "
                   << "status update " << update;
@@ -2860,6 +2858,14 @@ void Slave::statusUpdate(StatusUpdate update, const UPID& pid)
 
     return;
   }
+
+  // ContainerStatus::container_id will be exposed to schedulers and also to
+  // Master's state endpoint.
+  if (!containerStatus->has_container_id()) {
+    containerStatus->mutable_container_id()->CopyFrom(executor->containerId);
+  }
+
+  TaskStatus status = update.status();
 
   CHECK(executor->state == Executor::REGISTERING ||
         executor->state == Executor::RUNNING ||

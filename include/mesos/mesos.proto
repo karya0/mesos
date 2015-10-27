@@ -1479,6 +1479,9 @@ message ContainerInfo {
 message ContainerStatus {
   // This field can be reliably used to identify the container IP address.
   repeated NetworkInfo network_infos = 1;
+
+  // The container id can be used to identify the container
+  optional ContainerID container_id = 2;
 }
 
 
