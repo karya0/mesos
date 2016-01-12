@@ -28,6 +28,8 @@
 #include <stout/foreach.hpp>
 #include <stout/hashset.hpp>
 #include <stout/option.hpp>
+#include <stout/os.hpp>
+#include <stout/path.hpp>
 #include <stout/stringify.hpp>
 #include <stout/try.hpp>
 
@@ -64,10 +66,12 @@ class NoExecutorScheduler : public Scheduler
 public:
   NoExecutorScheduler(
       const FrameworkInfo& _frameworkInfo,
+      const ExecutorInfo& _executor,
       const string& _command,
       const Resources& _taskResources,
       const Option<size_t>& _totalTasks)
     : frameworkInfo(_frameworkInfo),
+      executor(_executor),
       command(_command),
       taskResources(_taskResources),
       tasksLaunched(0u),
@@ -118,8 +122,7 @@ public:
         task.set_name(command);
         task.mutable_slave_id()->CopyFrom(offer.slave_id());
         task.mutable_resources()->CopyFrom(taskResources);
-        task.mutable_command()->set_shell(true);
-        task.mutable_command()->set_value(command);
+        task.mutable_executor()->MergeFrom(executor);
 
         remaining -= taskResources;
 
@@ -220,6 +223,7 @@ public:
 
 private:
   FrameworkInfo frameworkInfo;
+  const ExecutorInfo executor;
 
   string command;
   Resources taskResources;
@@ -365,8 +369,26 @@ int main(int argc, char** argv)
     framework.set_principal(flags.principal.get());
   }
 
+  // Find this executable's directory to locate executor.
+  string uri;
+  Option<string> value = os::getenv("MESOS_BUILD_DIR");
+  if (value.isSome()) {
+    uri = path::join(value.get(), "src", "long-lived-executor");
+  } else {
+    uri = path::join(
+        os::realpath(Path(argv[0]).dirname()).get(),
+        "long-lived-executor");
+  }
+
+  ExecutorInfo executor;
+  executor.mutable_executor_id()->set_value("default");
+  executor.mutable_command()->set_value(uri);
+  executor.set_name("Long Lived Executor (C++)");
+  executor.set_source("cpp_long_lived_framework");
+
   NoExecutorScheduler scheduler(
       framework,
+      executor,
       flags.command,
       taskResources,
       flags.num_tasks);

@@ -70,13 +70,13 @@ public:
 
   virtual void launchTask(ExecutorDriver* driver, const TaskInfo& task)
   {
-    cout << "Starting task " << task.task_id().value() << endl;
+//    cout << "Starting task " << task.task_id().value() << endl;
 
-    std::thread* thread = new std::thread([=]() {
-      run(driver, task);
-    });
-
-    thread->detach();
+//    std::thread* thread = new std::thread([=]() {
+//      run(driver, task);
+//    });
+//
+//    thread->detach();
 
     TaskStatus status;
     status.mutable_task_id()->MergeFrom(task.task_id());
