@@ -32,6 +32,8 @@
 
 #include <mesos/executor/executor.hpp>
 
+#include <mesos/master/detector.hpp>
+
 #include <mesos/module/authenticatee.hpp>
 
 #include <mesos/slave/qos_controller.hpp>
@@ -62,8 +64,6 @@
 
 #include "internal/evolve.hpp"
 
-#include "master/detector.hpp"
-
 #include "messages/messages.hpp"
 
 #include "slave/constants.hpp"
@@ -84,8 +84,6 @@
 namespace mesos {
 namespace internal {
 
-class MasterDetector; // Forward declaration.
-
 namespace slave {
 
 using namespace process;
@@ -101,7 +99,7 @@ class Slave : public ProtobufProcess<Slave>
 public:
   Slave(const std::string& id,
         const Flags& flags,
-        MasterDetector* detector,
+        mesos::master::detector::MasterDetector* detector,
         Containerizer* containerizer,
         Files* files,
         GarbageCollector* gc,
@@ -512,7 +510,7 @@ private:
 
   boost::circular_buffer<process::Owned<Framework>> completedFrameworks;
 
-  MasterDetector* detector;
+  mesos::master::detector::MasterDetector* detector;
 
   Containerizer* containerizer;
 

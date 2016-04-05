@@ -46,6 +46,8 @@ using mesos::internal::master::Master;
 using mesos::internal::slave::ResourceMonitor;
 using mesos::internal::slave::Slave;
 
+using mesos::master::detector::MasterDetector;
+
 using std::numeric_limits;
 using std::vector;
 
