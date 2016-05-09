@@ -733,6 +733,13 @@ mesos::internal::slave::Flags::Flags()
       "  ]\n"
       "}");
 
+  add(&Flags::modulesDir,
+      "modules_dir",
+      "Directory path of the module manifest files.\n"
+      "The manifest files are processed in alphabetical order.\n"
+      "(See --modules for more information on module manifest files)\n"
+      "Cannot be used in conjunction with --modules.\n");
+
   add(&Flags::authenticatee,
       "authenticatee",
       "Authenticatee implementation to use when authenticating against the\n"

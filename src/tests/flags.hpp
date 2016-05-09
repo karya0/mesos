@@ -130,6 +130,13 @@ public:
         "  ]\n"
         "}");
 
+    add(&Flags::modulesDir,
+        "modules_dir",
+        "Directory path of the module manifest files.\n"
+        "The manifest files are processed in alphabetical order.\n"
+        "(See --modules for more information on module manifest files)\n"
+        "Cannot be used in conjunction with --modules.\n");
+
     // This help message is duplicated from slave/flags.hpp and
     // should always be kept in sync with that.
     add(&Flags::isolation,
@@ -158,6 +165,7 @@ public:
   std::string docker;
   std::string docker_socket;
   Option<Modules> modules;
+  Option<std::string> modulesDir;
   Option<std::string> isolation;
   std::string authenticators;
 };

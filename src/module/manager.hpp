@@ -62,7 +62,14 @@ public:
   //
   // NOTE: If loading fails at a particular library we don't unload
   // all of the already loaded libraries.
-  static Try<Nothing> load(const Modules& modules);
+  static Try<Nothing> load(const Modules& modules)
+  {
+    return loadManifest(modules);
+  }
+
+  // NOTE: If loading fails at a particular library we don't unload
+  // all of the already loaded libraries.
+  static Try<Nothing> load(const std::string& modulesDir);
 
   // create() should be called only after load().
   template <typename T>
@@ -139,6 +146,8 @@ public:
 
 private:
   static void initialize();
+
+  static Try<Nothing> loadManifest(const Modules& modules);
 
   static Try<Nothing> verifyModule(
       const std::string& moduleName,

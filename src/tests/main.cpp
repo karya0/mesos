@@ -28,6 +28,7 @@
 #include "logging/logging.hpp"
 
 #include "messages/messages.hpp" // For GOOGLE_PROTOBUF_VERIFY_VERSION.
+#include "module/manager.hpp"
 
 #include "tests/environment.hpp"
 #include "tests/flags.hpp"
@@ -65,6 +66,19 @@ int main(int argc, char** argv)
   }
 
   // Initialize Modules.
+  if (flags.modules.isSome() && flags.modulesDir.isSome()) {
+    EXIT(EXIT_FAILURE) <<
+      flags.usage("Only one of --modules or --modules_dir should be specified");
+  }
+
+  if (flags.modulesDir.isSome()) {
+    Try<Nothing> result =
+      mesos::modules::ModuleManager::load(flags.modulesDir.get());
+    if (result.isError()) {
+      EXIT(EXIT_FAILURE) << "Error loading modules: " << result.error();
+    }
+  }
+
   Try<Nothing> result = tests::initModules(flags.modules);
   if (result.isError()) {
     cerr << "Error initializing modules: " << result.error() << endl;
