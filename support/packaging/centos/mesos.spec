@@ -12,32 +12,49 @@ ExclusiveArch: x86_64
 
 Source0:       %{name}-%{version}.tar.gz
 Source1:       mesos-init-wrapper
-Source2:       %{name}-master.service
-Source3:       %{name}-slave.service
-Source4:       %{name}
-Source5:       %{name}-master
-Source6:       %{name}-slave
+Source2:       %{name}
+Source3:       %{name}-master
+Source4:       %{name}-slave
+Source5:       %{name}-master.service
+Source6:       %{name}-slave.service
 
+%if 0%{?el6}
+Source5:       %{name}-master.upstart
+Source6:       %{name}-slave.upstart
+%endif
+
+BuildRequires: apache-maven
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
+BuildRequires: make
+BuildRequires: libevent-devel
+BuildRequires: python-devel
 BuildRequires: java-devel
+BuildRequires: java-1.8.0-openjdk-devel
+BuildRequires: libnl3-devel
 BuildRequires: zlib-devel
 BuildRequires: libcurl-devel
 BuildRequires: openssl-devel
 BuildRequires: cyrus-sasl-devel
 BuildRequires: cyrus-sasl-md5
-BuildRequires: systemd
+BuildRequires: elfutils-libelf-devel
+BuildRequires: libblkid-devel
+BuildRequires: xfsprogs-devel
+BuildRequires: kernel-headers
+BuildRequires: patch
+
+%{?el6:BuildRequires: centos-release-scl}
+%{?el6:BuildRequires: devtoolset-4-gcc}
 
 BuildRequires: apr-devel
-BuildRequires: subversion-devel
 
 Requires: cyrus-sasl-md5
-Requires: docker
+%{?el7:Requires: systemd}
 
-# The slaves will indirectly require time syncing with the master
-# nodes so just call out the dependency.
-Requires: ntpdate
+Requires: ntp
 
 %description
 Apache Mesos is a cluster manager that provides efficient resource
@@ -49,14 +66,17 @@ a dynamically shared pool of nodes.
 %setup -q
 
 %build
-%configure --enable-optimize \
+%configure \
+    --enable-optimize \
     --disable-python-dependency-install \
     --enable-optimize \
     --enable-install-module-dependencies \
     --enable-libevent \
-    --enable-ssl
+    --enable-ssl \
+    --enable-hardening \
+    --enable-xfs-disk-isolator
 
-make %{?_smp_mflags} V=0
+%make_build %{?_smp_mflags} V=0
 
 %check
 
@@ -76,13 +96,19 @@ echo %{_var}/log/%{name}       > %{buildroot}%{_sysconfdir}/mesos-master/work_di
 echo %{_var}/log/%{name}       > %{buildroot}%{_sysconfdir}/mesos-slave/work_dir
 echo 1                         > %{buildroot}%{_sysconfdir}/mesos-master/quorum
 
-install -m 0644 %{SOURCE4} %{SOURCE5} %{SOURCE6} %{buildroot}%{_sysconfdir}/default
-
 install -m 0644 %{SOURCE1} %{buildroot}%{_bindir}/
-install -m 0644 %{SOURCE2} %{SOURCE3} %{buildroot}%{_unitdir}/
+install -m 0644 %{SOURCE2} %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/default
+install -m 0644 %{SOURCE5} %{SOURCE6} %{buildroot}%{_unitdir}/
+
+%if 0%{?el6}
+mkdir -p -m0755 %{buildroot}%{_sysconfdir}/init
+install -m 0644 %{SOURCE5} %{buildroot}%{_sysconfdir}/init/mesos-master.conf
+install -m 0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/init/mesos-slave.conf
+%endif
 
 mkdir -p -m0755 %{buildroot}%{_datadir}/java
 install -m 0644 src/java/target/mesos-*.jar %{buildroot}%{_datadir}/java/
+
 
 %files
 %doc LICENSE NOTICE
@@ -97,6 +123,9 @@ install -m 0644 src/java/target/mesos-*.jar %{buildroot}%{_datadir}/java/
 %attr(0755,mesos,mesos) %{_var}/lib/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}*
 %config(noreplace) %{_sysconfdir}/default/%{name}*
+%if 0%{?el6}
+%config(noreplace) %{_sysconfdir}/init/%{name}-*
+%endif
 %{_unitdir}/%{name}*.service
 
 ######################
@@ -117,7 +146,9 @@ install -m 0644 src/java/target/mesos-*.jar %{buildroot}%{_datadir}/java/
 
 %post
 /sbin/ldconfig
+%if 0%{?el7}
 %systemd_post %{name}-slave.service %{name}-master.service
+%endif
 
 %preun
 
