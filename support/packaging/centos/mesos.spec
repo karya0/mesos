@@ -39,7 +39,6 @@ BuildRequires: cyrus-sasl-devel
 BuildRequires: cyrus-sasl-md5
 BuildRequires: elfutils-libelf-devel
 BuildRequires: libblkid-devel
-BuildRequires: xfsprogs-devel
 BuildRequires: kernel-headers
 BuildRequires: subversion-devel >= 1.9
 BuildRequires: subversion-devel < 2.0
@@ -52,11 +51,14 @@ BuildRequires: devtoolset-3-gcc-c++
 BuildRequires: epel-rpm-macros
 BuildRequires: libevent2-devel
 BuildRequires: scl-utils
+%define _with_xfs no
 %else
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: libevent-devel
 BuildRequires: which
+BuildRequires: xfsprogs-devel
+%define _with_xfs yes
 %endif
 
 BuildRequires: apr-devel
@@ -85,7 +87,7 @@ a dynamically shared pool of nodes.
     --enable-libevent \
     --enable-ssl \
     --enable-hardening \
-    --enable-xfs-disk-isolator
+    --enable-xfs-disk-isolator=%{_with-xfs}
 
 %make_build %{?_smp_mflags} V=0
 
