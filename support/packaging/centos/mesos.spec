@@ -28,7 +28,6 @@ BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
 BuildRequires: make
-BuildRequires: libevent-devel
 BuildRequires: python-devel
 BuildRequires: java-1.8.0-openjdk-devel
 BuildRequires: libnl3-devel
@@ -49,9 +48,11 @@ BuildRequires: patch
 BuildRequires: centos-release-scl
 BuildRequires: devtoolset-3-gcc
 BuildRequires: devtoolset-3-gcc-c++
+BuildRequires: libevent2-devel
 %else
 BuildRequires: gcc
 BuildRequires: gcc-c++
+BuildRequires: libevent-devel
 %endif
 
 BuildRequires: apr-devel
