@@ -19,13 +19,13 @@ Source5:       %{name}-master.service
 Source6:       %{name}-slave.service
 
 %if 0%{?el6}
-Source5:       %{name}-master.upstart
-Source6:       %{name}-slave.upstart
+Source7:       %{name}-master.upstart
+Source8:       %{name}-slave.upstart
 %endif
 
 BuildRequires: apache-maven
-BuildRequires: gcc > 4.8
-BuildRequires: gcc-c++ > 4.8
+BuildRequires: gcc >= 4.8
+BuildRequires: gcc-c++ >= 4.8
 BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
@@ -105,8 +105,8 @@ install -m 0644 %{SOURCE5} %{SOURCE6} %{buildroot}%{_unitdir}/
 
 %if 0%{?el6}
 mkdir -p -m0755 %{buildroot}%{_sysconfdir}/init
-install -m 0644 %{SOURCE5} %{buildroot}%{_sysconfdir}/init/mesos-master.conf
-install -m 0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/init/mesos-slave.conf
+install -m 0644 %{SOURCE7} %{buildroot}%{_sysconfdir}/init/mesos-master.conf
+install -m 0644 %{SOURCE8} %{buildroot}%{_sysconfdir}/init/mesos-slave.conf
 %endif
 
 mkdir -p -m0755 %{buildroot}%{_datadir}/java
