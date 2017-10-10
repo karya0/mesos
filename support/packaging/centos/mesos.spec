@@ -24,8 +24,8 @@ Source6:       %{name}-slave.upstart
 %endif
 
 BuildRequires: apache-maven
-BuildRequires: gcc
-BuildRequires: gcc-c++
+BuildRequires: gcc > 4.8
+BuildRequires: gcc-c++ > 4.8
 BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
