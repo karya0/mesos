@@ -16,7 +16,7 @@ RUN yum install -y devtoolset-3-toolchain
 RUN echo -e '[WANdiscoSVN]\n\
 name=WANdisco SVN Repo 1.9\n\
 enabled=1\n\
-baseurl=http://opensource.wandisco.com/centos/7/svn-1.9/RPMS/\$basearch/\n\
+baseurl=http://opensource.wandisco.com/centos/6/svn-1.9/RPMS/\$basearch/\n\
 gpgcheck=1\n\
 gpgkey=http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco' \
 >> /etc/yum.repos.d/wandisco-svn.repo
