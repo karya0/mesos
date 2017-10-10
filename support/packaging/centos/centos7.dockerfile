@@ -2,7 +2,7 @@ FROM centos:7
 MAINTAINER Kapil Arya <kapil@apache.org>
 
 # Get curl.
-RUN yum install -y    \
+RUN yum install -y      \
       curl              \
       epel-release      \
       redhat-rpm-config \
