@@ -4,11 +4,8 @@ MAINTAINER Kapil Arya <kapil@apache.org>
 # Get curl.
 RUN yum install -y      \
       curl              \
-      epel-release      \
       redhat-rpm-config \
-      rpm-build         \
-      wget              \
-      which
+      rpm-build
 
 # Add the Subversion repo.
 RUN echo -e '[WANdiscoSVN]\n\

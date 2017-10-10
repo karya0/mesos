@@ -27,6 +27,7 @@ BuildRequires: apache-maven
 BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
+BuildRequires: epel-release
 BuildRequires: make
 BuildRequires: python-devel
 BuildRequires: java-1.8.0-openjdk-devel
@@ -48,11 +49,14 @@ BuildRequires: patch
 BuildRequires: centos-release-scl
 BuildRequires: devtoolset-3-gcc
 BuildRequires: devtoolset-3-gcc-c++
+BuildRequires: epel-rpm-macros
 BuildRequires: libevent2-devel
+BuildRequires: scl-utils
 %else
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: libevent-devel
+BuildRequires: which
 %endif
 
 BuildRequires: apr-devel
