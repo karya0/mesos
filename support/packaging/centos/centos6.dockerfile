@@ -6,6 +6,7 @@ RUN yum install -y              \
       centos-release-scl        \
       redhat-rpm-config         \
       rpm-build                 \
+      scl-utils                 \
       yum-utils
 
 # Add the Subversion repo.

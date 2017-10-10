@@ -49,7 +49,6 @@ BuildRequires: devtoolset-3-gcc
 BuildRequires: devtoolset-3-gcc-c++
 BuildRequires: epel-rpm-macros
 BuildRequires: libevent2-devel
-BuildRequires: scl-utils
 %define _with_xfs no
 %else
 BuildRequires: gcc
