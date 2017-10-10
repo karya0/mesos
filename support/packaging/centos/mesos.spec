@@ -44,6 +44,8 @@ BuildRequires: elfutils-libelf-devel
 BuildRequires: libblkid-devel
 BuildRequires: xfsprogs-devel
 BuildRequires: kernel-headers
+BuildRequires: subversion-devel >= 1.9
+BuildRequires: subversion-devel < 2.0
 BuildRequires: patch
 
 %{?el6:BuildRequires: centos-release-scl}
