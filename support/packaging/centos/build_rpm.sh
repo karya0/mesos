@@ -1,6 +1,7 @@
 #!/bin/bash
 
-WORK_DIR="${WORK_DIR:-`pwd`}"
+MESOS_DIR="${MESOS_DIR:-/mesos}"
+WORK_DIR="${WORK_DIR:-/mesos}"
 # Get curl.
 yum install -y wget curl unzip rpm-build redhat-rpm-config
 
@@ -25,7 +26,7 @@ curl -sSL \
 
 yum makecache
 
-yum-builddep -y /mesos/support/packaging/centos/mesos.spec
+yum-builddep -y ${MESOS_DIR}/support/packaging/centos/mesos.spec
 
 whoami
 set -x
@@ -39,8 +40,8 @@ mkdir -p $HOME
 
 mkdir -p $HOME/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-cp support/packaging/common/* $HOME/rpmbuild/SOURCES
-cp support/packaging/centos/mesos.spec $HOME/rpmbuild/SPECS
+cp ${MESOS_DIR}/support/packaging/common/* $HOME/rpmbuild/SOURCES
+cp ${MESOS_DIR}/support/packaging/centos/mesos.spec $HOME/rpmbuild/SPECS
 
 pushd $HOME/rpmbuild/SOURCES
 if [ "$MESOS_VERSION" = "$MESOS_TAG" ]; then
