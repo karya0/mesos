@@ -30,7 +30,6 @@ BuildRequires: autoconf
 BuildRequires: make
 BuildRequires: libevent-devel
 BuildRequires: python-devel
-BuildRequires: java-devel
 BuildRequires: java-1.8.0-openjdk-devel
 BuildRequires: libnl3-devel
 BuildRequires: zlib-devel

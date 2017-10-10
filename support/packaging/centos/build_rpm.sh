@@ -7,7 +7,7 @@ MESOS_RELEASE=${MESOS_RELEASE:-1}
 export HOME="${PWD}/centos${CENTOS_VERSION}"
 mkdir -p $HOME/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-PACKAGING_DIR=$(realpath "$(dirname "$(dirname "$0")")")
+PACKAGING_DIR=$(readlink -e "$(dirname "$(dirname "$0")")")
 cp ${PACKAGING_DIR}/common/* $HOME/rpmbuild/SOURCES
 cp ${PACKAGING_DIR}/centos/mesos.spec $HOME/rpmbuild/SPECS
 
