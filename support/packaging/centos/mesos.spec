@@ -52,6 +52,7 @@ BuildRequires: patch
 %{?el6:BuildRequires: devtoolset-4-gcc}
 
 BuildRequires: apr-devel
+BuildRequires: apr-util-devel
 
 Requires: cyrus-sasl-md5
 %{?el7:Requires: systemd}

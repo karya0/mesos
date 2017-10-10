@@ -19,7 +19,8 @@ node {
   // }
 
   sh 'mkdir -p .m2'
-  def dockerArgs = "-e MESOS_TAG=${params.MESOS_TAG} -e MESOS_RELEASE=${params.MESOS_RELEASE}"
+  def dockerArgs = "-e MESOS_TAG=${params.MESOS_TAG}"
+      dockerArgs = "-e MESOS_RELEASE=${params.MESOS_RELEASE}"
       dockerArgs = "${dockerArgs} -v=/etc/passwd:/etc/passwd"
       dockerArgs = "${dockerArgs} -v=/etc/group:/etc/group"
       dockerArgs = "${dockerArgs} -v=$PWD/.m2:$HOME/.m2
