@@ -3,15 +3,13 @@ MAINTAINER Kapil Arya <kapil@apache.org>
 
 # Get curl.
 RUN yum install -y              \
-      centos-release-scl-rh     \
-      curl                      \
+      centos-release-scl        \
       devtoolset-3-toolchain    \
       epel-release              \
       redhat-rpm-config         \
       rpm-build                 \
       scl-utils                 \
-      wget                      \
-      which
+      yum-utils
 
 # Add the Subversion repo.
 RUN echo -e '[WANdiscoSVN]\n\
