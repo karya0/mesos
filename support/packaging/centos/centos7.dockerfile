@@ -2,9 +2,10 @@ FROM centos:7
 MAINTAINER Kapil Arya <kapil@apache.org>
 
 # Get curl.
-RUN yum install -y      \
-      curl              \
-      redhat-rpm-config \
+RUN yum install -y              \
+      curl                      \
+      epel-release              \
+      redhat-rpm-config         \
       rpm-build
 
 # Add the Subversion repo.
