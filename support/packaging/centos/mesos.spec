@@ -45,7 +45,6 @@ BuildRequires: subversion-devel < 2.0
 BuildRequires: patch
 
 %if 0%{?el6}
-BuildRequires: centos-release-scl
 BuildRequires: devtoolset-3-gcc
 BuildRequires: devtoolset-3-gcc-c++
 BuildRequires: epel-rpm-macros

@@ -3,6 +3,7 @@ MAINTAINER Kapil Arya <kapil@apache.org>
 
 # Get curl.
 RUN yum install -y              \
+      centos-release-scl        \
       redhat-rpm-config         \
       rpm-build                 \
       yum-utils
