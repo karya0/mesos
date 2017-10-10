@@ -24,8 +24,8 @@ Source8:       %{name}-slave.upstart
 %endif
 
 BuildRequires: apache-maven
-BuildRequires: gcc >= 4.8
-BuildRequires: gcc-c++ >= 4.8
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
@@ -49,7 +49,7 @@ BuildRequires: subversion-devel < 2.0
 BuildRequires: patch
 
 %{?el6:BuildRequires: centos-release-scl}
-%{?el6:BuildRequires: devtoolset-4-gcc}
+%{?el6:BuildRequires: devtoolset-3-gcc}
 
 BuildRequires: apr-devel
 BuildRequires: apr-util-devel
