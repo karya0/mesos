@@ -84,7 +84,7 @@ a dynamically shared pool of nodes.
     --enable-libevent \
     --enable-ssl \
     --enable-hardening \
-    --enable-xfs-disk-isolator=%{_with-xfs}
+    --enable-xfs-disk-isolator=%{_with_xfs}
 
 %make_build %{?_smp_mflags} V=0
 
