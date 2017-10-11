@@ -11,7 +11,7 @@ PACKAGING_DIR=$(readlink -e "$(dirname "$(dirname "$0")")")
 cp ${PACKAGING_DIR}/common/* $HOME/rpmbuild/SOURCES
 cp ${PACKAGING_DIR}/centos/mesos.spec $HOME/rpmbuild/SPECS
 
-if [ -z "MESOS_TAG" ]; then
+if [ -z "$MESOS_TAG" ]; then
   gitsha=$(git rev-parse --short HEAD)
   snapshot_version=$(date -u +'%Y%m%d')git$gitsha
   MESOS_RELEASE=0.1.pre.$snapshot_version
