@@ -15,13 +15,17 @@ Source1:       mesos-init-wrapper
 Source2:       %{name}
 Source3:       %{name}-master
 Source4:       %{name}-slave
-Source5:       %{name}-master.service
-Source6:       %{name}-slave.service
 
 %if 0%{?el6}
-Source7:       %{name}-master.upstart
-Source8:       %{name}-slave.upstart
+Source5:       %{name}-master.upstart
+Source6:       %{name}-slave.upstart
 %endif
+
+%if 0%{?el7}
+Source5:       %{name}-master.service
+Source6:       %{name}-slave.service
+%endif
+
 
 BuildRequires: apache-maven
 BuildRequires: libtool
@@ -97,7 +101,6 @@ mkdir -p -m0755 %{buildroot}%{_sysconfdir}/default
 mkdir -p -m0755 %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p -m0755 %{buildroot}%{_sysconfdir}/%{name}-master
 mkdir -p -m0755 %{buildroot}%{_sysconfdir}/%{name}-slave
-mkdir -p -m0755 %{buildroot}%{_unitdir}/
 mkdir -p -m0755 %{buildroot}/%{_var}/log/%{name}
 mkdir -p -m0755 %{buildroot}/%{_var}/lib/%{name}
 
@@ -108,12 +111,16 @@ echo 1                         > %{buildroot}%{_sysconfdir}/mesos-master/quorum
 
 install -m 0644 %{SOURCE1} %{buildroot}%{_bindir}/
 install -m 0644 %{SOURCE2} %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/default
-install -m 0644 %{SOURCE5} %{SOURCE6} %{buildroot}%{_unitdir}
 
 %if 0%{?el6}
 mkdir -p -m0755 %{buildroot}%{_sysconfdir}/init
-install -m 0644 %{SOURCE7} %{buildroot}%{_sysconfdir}/init/mesos-master.conf
-install -m 0644 %{SOURCE8} %{buildroot}%{_sysconfdir}/init/mesos-slave.conf
+install -m 0644 %{SOURCE5} %{buildroot}%{_sysconfdir}/init/mesos-master.conf
+install -m 0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/init/mesos-slave.conf
+%endif
+
+%if 0%{?el7}
+mkdir -p -m0755 %{buildroot}%{_unitdir}/
+install -m 0644 %{SOURCE5} %{SOURCE6} %{buildroot}%{_unitdir}
 %endif
 
 mkdir -p -m0755 %{buildroot}%{_datadir}/java
@@ -133,10 +140,14 @@ install -m 0644 src/java/target/mesos-*.jar %{buildroot}%{_datadir}/java/
 %attr(0755,mesos,mesos) %{_var}/lib/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}*
 %config(noreplace) %{_sysconfdir}/default/%{name}*
+
 %if 0%{?el6}
 %config(noreplace) %{_sysconfdir}/init/%{name}-*
 %endif
+
+%if 0%{?el7}
 %{_unitdir}/%{name}*.service
+%endif
 
 ######################
 #%files devel
