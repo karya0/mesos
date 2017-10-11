@@ -27,7 +27,6 @@ BuildRequires: apache-maven
 BuildRequires: libtool
 BuildRequires: automake
 BuildRequires: autoconf
-BuildRequires: epel-release
 BuildRequires: make
 BuildRequires: python-devel
 BuildRequires: java-1.8.0-openjdk-devel
