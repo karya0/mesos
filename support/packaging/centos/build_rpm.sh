@@ -12,6 +12,10 @@ MESOS_DIR=$(readlink -e $PACKAGING_DIR/../../)
 cp ${PACKAGING_DIR}/common/* $HOME/rpmbuild/SOURCES
 cp ${PACKAGING_DIR}/centos/mesos.spec $HOME/rpmbuild/SPECS
 
+if [ "$CENTOS_VERSION" = "6" ]; then
+  source scl_source enable devtoolset-3
+fi
+
 if [ -z "$MESOS_TAG" ]; then
   gitsha=$(git rev-parse --short HEAD)
   snapshot_version=$(date -u +'%Y%m%d')git$gitsha
@@ -37,10 +41,6 @@ else
   curl -sSL \
     https://dist.apache.org/repos/dist/dev/mesos/${MESOS_TAG}/mesos-${MESOS_VERSION}.tar.gz \
     -o $HOME/rpmbuild/SOURCES/mesos-${MESOS_VERSION}.tar.gz
-fi
-
-if [ "$CENTOS_VERSION" = "6" ]; then
-  source scl_source enable devtoolset-3
 fi
 
 rpmbuild \
