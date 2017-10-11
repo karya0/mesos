@@ -5,6 +5,7 @@ MAINTAINER Kapil Arya <kapil@apache.org>
 RUN yum install -y              \
       curl                      \
       epel-release              \
+      git                       \
       redhat-rpm-config         \
       rpm-build
 

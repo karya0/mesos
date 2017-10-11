@@ -5,6 +5,7 @@ MAINTAINER Kapil Arya <kapil@apache.org>
 RUN yum install -y              \
       centos-release-scl        \
       epel-release              \
+      git                       \
       redhat-rpm-config         \
       rpm-build                 \
       scl-utils                 \

@@ -17,8 +17,6 @@ if [ -z "$MESOS_TAG" ]; then
   snapshot_version=$(date -u +'%Y%m%d')git$gitsha
   MESOS_RELEASE=0.1.pre.$snapshot_version
 
-  MESOS_VERSION=$($PACKAGING_DIR/../../configure --version|head -1|cut -d' ' -f3)
-
   pushd $MESOS_DIR
   ./bootstrap
   popd
@@ -26,6 +24,7 @@ if [ -z "$MESOS_TAG" ]; then
   TMP_BUILD_DIR=`mktemp -d ./mesos-centos-rpm-build-XXXX`
   pushd $TMP_BUILD_DIR
   $MESOS_DIR/configure && make dist
+  MESOS_VERSION=$($MESOS_DIR/configure --version|head -1|cut -d' ' -f3)
   popd
 
   cp -f $TMP_BUILD_DIR/mesos-$MESOS_VERSION.tar.gz $HOME/rpmbuild/SOURCES/
