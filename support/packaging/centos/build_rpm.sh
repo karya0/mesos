@@ -8,6 +8,7 @@ export HOME="${PWD}/centos${CENTOS_VERSION}"
 mkdir -p $HOME/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 PACKAGING_DIR=$(readlink -e "$(dirname "$(dirname "$0")")")
+MESOS_DIR=$(readlink -e $PACKAGING_DIR/../../)
 cp ${PACKAGING_DIR}/common/* $HOME/rpmbuild/SOURCES
 cp ${PACKAGING_DIR}/centos/mesos.spec $HOME/rpmbuild/SPECS
 
@@ -18,9 +19,13 @@ if [ -z "$MESOS_TAG" ]; then
 
   MESOS_VERSION=$($PACKAGING_DIR/../../configure --version|head -1|cut -d' ' -f3)
 
+  pushd $MESOS_DIR
+  ./bootstrap
+  popd
+
   TMP_BUILD_DIR=`mktemp -d ./mesos-centos-rpm-build-XXXX`
   pushd $TMP_BUILD_DIR
-  $PACKAGING_DIR/../../configure && make dist
+  $MESOS_DIR/configure && make dist
   popd
 
   cp -f $TMP_BUILD_DIR/mesos-$MESOS_VERSION.tar.gz $HOME/rpmbuild/SOURCES/
