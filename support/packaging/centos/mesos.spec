@@ -108,7 +108,7 @@ echo 1                         > %{buildroot}%{_sysconfdir}/mesos-master/quorum
 
 install -m 0644 %{SOURCE1} %{buildroot}%{_bindir}/
 install -m 0644 %{SOURCE2} %{SOURCE3} %{SOURCE4} %{buildroot}%{_sysconfdir}/default
-install -m 0644 %{SOURCE5} %{SOURCE6} %{buildroot}%{_unitdir}/
+install -m 0644 %{SOURCE5} %{SOURCE6} %{buildroot}%{_unitdir}
 
 %if 0%{?el6}
 mkdir -p -m0755 %{buildroot}%{_sysconfdir}/init
