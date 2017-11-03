@@ -10,6 +10,13 @@ def dockerArgs() {
   return args
 }
 
+def uploadToBintray(def pattern) {
+  withCredentials([string(credentialsId: 'karya_bintray_credentials', variable: 'BINTRAY_CREDS')]) {
+    sh 'find -name ' + pattern + ' | grep -v debug > rpms'
+    sh 'for file in $(cat rpms); do sh -x support/packaging/bintray.sh $file; done'
+  }
+}
+
 parallel(centos7: {
   node {
     checkout scm
@@ -28,6 +35,7 @@ parallel(centos7: {
     }
 
     archiveArtifacts artifacts: '**/*.rpm', fingerprint: true
+    uploadToBintray('*.rpm')
   }
 },
 centos6: {
@@ -48,5 +56,6 @@ centos6: {
     }
 
     archiveArtifacts artifacts: '**/*.rpm', fingerprint: true
+    uploadToBintray('*.rpm')
   }
 })
